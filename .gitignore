@@ -1,0 +1,57 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CMake stuff
+bin
+CMakeFiles
+CMakeScripts
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+
+# Visual Studio stuff
+*.vcxproj*
+Debug
+Win32
+*.dir
+*.sdf
+*.sln
+*.suo
+*.opensdf
+
+# Xcode
+*.xcodeproj
+
+# vim
+*.swp
+.DS_Store
+*.pyc
+
+# misc
+sponza_crytek_original
+sponza_old
