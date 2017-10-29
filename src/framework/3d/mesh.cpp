@@ -9,15 +9,15 @@
 
 
 namespace Framework {
-    Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures)
+    Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures) :
+	m_vertices(vertices),
+	m_indices(indices),
+	m_textures(textures)
     {
-        m_vertices = vertices;
-        m_indices = indices;
-        m_textures = textures;
         SetupMesh();
     }
 
-    void Mesh::Draw(const Shader &m_shader)
+    void Mesh::Draw(Shader &shader)
     {
         GLuint diffuseNr = 1;
         GLuint specularNr = 1;
@@ -40,7 +40,7 @@ namespace Framework {
                 ss << heightNr++;
             number = ss.str();
 
-            glUniform1i(glGetUniformLocation(m_shader.m_program, (name + number).c_str()), i);
+            shader.SetInt( (name + number).c_str(), i);
 
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
         }

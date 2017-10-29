@@ -31,18 +31,18 @@ namespace Framework {
             glm::vec3 Bitangent;
         };
 
+        Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures);
+        void Draw(Shader &shader);
+
+    private:
+        void SetupMesh();
+
         std::vector<Vertex>  m_vertices;
         std::vector<GLuint>  m_indices;
         std::vector<Texture> m_textures;
-        GLuint m_vao;
 
-        Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures);
-
-        void Draw(const Shader &m_shader);
-
-    private:
-        GLuint m_vbo, m_ebo;
-        void SetupMesh();
+        GLuint               m_vao;
+        GLuint               m_vbo, m_ebo;
     };
 }
 #endif

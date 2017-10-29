@@ -16,7 +16,7 @@ namespace Framework {
     public:
         RenderObject(const std::string &modelPath, const glm::vec3 pos = glm::vec3(0.0f), const glm::vec3 scale = glm::vec3(0.0f), const glm::vec3 rot = glm::vec3(0.0f), const float angle = 0.0f);
 
-        void Draw(const Shader &currentShader);
+        void Draw(Shader &currentShader);
 
         float m_angle;
 

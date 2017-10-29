@@ -15,9 +15,9 @@ namespace Framework {
         LoadModel(path);
     }
 
-    void Model::Draw(const Shader &m_shader) {
+    void Model::Draw(Shader &shader) {
         for(GLuint i = 0; i < m_meshes.size(); i++)
-            m_meshes[i].Draw(m_shader);
+            m_meshes[i].Draw(shader);
     }
 
     aiMesh *Model::GetMesh() const {

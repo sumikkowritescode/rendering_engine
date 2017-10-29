@@ -20,7 +20,6 @@ namespace Framework {
         Shader &GetShader();
 
         void SetTextures();
-        void UseShader();
         void ReloadShader();
 
     private:

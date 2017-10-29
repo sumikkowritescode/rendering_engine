@@ -6,7 +6,7 @@ namespace Framework {
     {
     }
 
-    void RenderObject::Draw(const Shader &currentShader) {
+    void RenderObject::Draw(Shader &currentShader) {
         m_model.Draw(currentShader);
     }
 }
