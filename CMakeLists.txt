@@ -39,6 +39,8 @@ file(GLOB SOURCE_FILES
     "src/framework/renderer/*.h"
     "src/framework/scene/*.cpp"
     "src/framework/scene/*.h"
+    "src/utils/*.cpp"
+    "src/utils/*.h"
 )
 
 add_executable(${project_name} ${SOURCE_FILES})

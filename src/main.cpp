@@ -256,7 +256,7 @@ void UpdateImgui(SDL_Window* &window, Framework::Scene &scene, SDL_GLContext &gl
             if (ImGui::Button("Reload Shaders")) scene.m_shadowMap.ReloadShaders();
         }
 
-        ImGui::NewLine;
+        ImGui::NewLine();
         if (ImGui::Button("Quit")) quit = true;
     
         ImGui::Text("avg framerate %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

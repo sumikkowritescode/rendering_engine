@@ -1,36 +1,22 @@
 #ifndef POINTLIGHT_H
 #define POINTLIGHT_H
 
-#ifdef __APPLE__
-    #include <SDL2/SDL.h>
-#endif
-#ifdef __unix__
-    #include <SDL2/SDL.h>
-#endif
-#ifdef _WIN32
-    #include <SDL.h>
-#endif
-
-#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
-#include <ctime>
 #include <vector>
 
 #include "../gpu/shader.h"
 #include "../gpu/shader_storage_buffer.hpp"
 #include "../3d/cube.h"
-
+#include "../base/time.h"
 
 namespace Framework {
     class Pointlight {
     public:
         Pointlight();
         void Init(const GLuint nr_lights);
-        void RandomizePosition();
+        void RandomizePosition(const Time &time);
         void Render(const glm::mat4 &view);
         void RenderLightBox(const glm::mat4 &projection, const glm::mat4 &view, glm::mat4 &model);
 

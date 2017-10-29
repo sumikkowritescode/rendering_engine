@@ -1,5 +1,10 @@
 #include "pointlight.h"
 
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include "../../utils/random_generator.h"
+
 namespace Framework {
     Pointlight::Pointlight() :
         constant(0.6f),
@@ -13,8 +18,6 @@ namespace Framework {
     void Pointlight::Init(const GLuint NR_LIGHTS) {
         m_lightCount = NR_LIGHTS;
 
-        // TODO: Refactor to use a random generator and own functions
-        srand((unsigned int)time(nullptr));
         for (GLuint i = 0; i != NR_LIGHTS; ++i)
         {
             Light tempLight;
@@ -26,9 +29,10 @@ namespace Framework {
         // TODO: Split to own function
         for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
         {
-            m_lightRandoms.push_back(glm::vec3( (rand() % 200) / 100.0f,
-                                              (rand() % 100) / 100.0f,
-                                              (rand() % 300) / 100.0f
+            m_lightRandoms.push_back(glm::vec3(
+                                               Utils::GetRandomFloat(0.0f, 200.0f) / 100.0f,
+                                               Utils::GetRandomFloat(0.0f, 100.0f) / 100.0f,
+                                               Utils::GetRandomFloat(0.0f, 300.0f) / 100.0f
                                             ));
         }
 
@@ -37,15 +41,16 @@ namespace Framework {
     }
 
     // TODO: Make simpler, use a random generator
-    void Pointlight::RandomizePosition() {
+    // Split to a different class
+    void Pointlight::RandomizePosition(const Time &time) {
         auto lightRandomsIt = m_lightRandoms.begin();
         for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
         {
-            it->Position.x += sin(lightRandomsIt->x + SDL_GetTicks() * 0.001f) * 0.1f;
+            it->Position.x += sin(lightRandomsIt->x + time.deltaTime) * 0.1f;
             it->Position.y -= lightRandomsIt->y * 0.1f;
             if (it->Position.y <= -5.0f)
                 it->Position.y = 300.0f;
-            it->Position.z += sin(lightRandomsIt->z + SDL_GetTicks() * 0.001f) * 0.05f;
+            it->Position.z += sin(lightRandomsIt->z + time.deltaTime) * 0.05f;
             ++lightRandomsIt;
         }
     }
@@ -84,18 +89,20 @@ namespace Framework {
 
     // TODO: Refactor to use the random generator in utils instead
     glm::vec4 Pointlight::GetRandomPosition() {
-        return glm::vec4( (rand() % 600) - 300.0f,
-                          (rand() % 250 + 5) + 20.0f,
-                          (rand() % 250) - 125.0f,
-                           1.0f
+        return glm::vec4( 
+                         Utils::GetRandomFloat(0.0f, 600.0f) - 300.0f,
+                         Utils::GetRandomFloat(5.0f, 250.0f) + 20.0f,
+                         Utils::GetRandomFloat(0.0f, 250.0f) - 125.0f,
+                         1.0f
                         );
     }
 
     glm::vec4 Pointlight::GetRandomColor() {
-        return glm::vec4( ((rand() % 100) / 100.0) + 1.0f,
-                          ((rand() % 100) / 100.0) + 1.0f,
-                          ((rand() % 100) / 100.0) + 1.0f,
-                           1.0f
+        return glm::vec4( 
+                         Utils::GetRandomFloat(0.0f, 100.0f) + 1.0f,
+                         (Utils::GetRandomFloat(0.0f, 100.0f) / 100.0f) + 1.0f,
+                         (Utils::GetRandomFloat(0.0f, 100.0f) / 100.0f) + 1.0f,
+                         1.0f
                         );
     }
 }
