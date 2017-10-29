@@ -16,7 +16,7 @@ find_package(ASSIMP REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIR})
 include_directories(${SDL2_INCLUDE_DIR})
-include_directories(${GLEW_INCLUDE_PATH})
+include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${GLM_INCLUDE_DIR})
 include_directories(${ASSIMP_INCLUDE_DIR})
 
