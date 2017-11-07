@@ -12,10 +12,11 @@
 #include "../gpu/shader.h"
 #include "../gpu/gbuffer.h"
 
-#include "../light/pointlight.h"
-
 #include "../postprocess/ssao.h"
 #include "../postprocess/postprocess.h"
+
+#include "lightcontroller.h"
+
 
 namespace Framework {
     class Scene {
@@ -27,7 +28,7 @@ namespace Framework {
 
         void GeometryPass(std::vector<RenderObject> &renderObjects, Camera &camera, Renderer &renderer);
         void ShadowmapPass(std::vector<RenderObject> &renderObjects);
-        void LightingPass(int drawMode, GLfloat ambience, Camera &camera, Renderer &renderer);
+        void LightingPass(int drawMode, GLfloat ambience, Camera &camera, Renderer &renderer, const Time &time);
 
         void RenderLights(Renderer &renderer);
         void RenderSkybox(Camera &camera);
@@ -61,7 +62,7 @@ namespace Framework {
 
         Shader      m_shaderLightingPass;
         Shader      m_shaderLightBox;
-        Pointlight  m_pointlights;
+        LightController  m_lightController;
         GBuffer     m_gbuffer;
         Skybox      m_skybox;
     };
