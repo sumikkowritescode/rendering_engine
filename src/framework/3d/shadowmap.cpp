@@ -56,8 +56,8 @@ namespace Framework {
         renderer.SetViewport();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_shaderDebug.Use();
-        glUniform1f(glGetUniformLocation(m_shaderDebug.m_program, "zNear"), zNear);
-        glUniform1f(glGetUniformLocation(m_shaderDebug.m_program, "zFar"), zFar);
+        m_shaderDebug.SetInt("zNear", zNear);
+        m_shaderDebug.SetInt("zFar", zFar);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_texture);
         fsQuad.Render();
@@ -68,7 +68,7 @@ namespace Framework {
         m_shaderDebug.Reload();
 
         m_shaderDebug.Use();
-        glUniform1i(glGetUniformLocation(m_shaderDebug.m_program, "m_depthTex"), 0);
+        m_shaderDebug.SetInt("m_depthTex", 0);
     }
 
     Shader &ShadowMap::GetShader() {

@@ -78,8 +78,8 @@ namespace Framework {
     {
         glDepthFunc(GL_LEQUAL);
         m_shaderSkybox.Use();
-        glUniformMatrix4fv(glGetUniformLocation(m_shaderSkybox.m_program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(m_shaderSkybox.m_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        m_shaderSkybox.SetMatrix("view", view);
+        m_shaderSkybox.SetMatrix("projection", projection);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTexture);
@@ -93,6 +93,6 @@ namespace Framework {
         m_shaderSkybox.Reload();
 
         m_shaderSkybox.Use();
-        glUniform1i(glGetUniformLocation(m_shaderSkybox.m_program, "skybox"), 0);
+        m_shaderSkybox.SetInt("skybox", 0);
     }
 }

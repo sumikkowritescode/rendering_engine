@@ -47,7 +47,6 @@ namespace Framework {
 
         GLfloat lerp(GLfloat a, GLfloat b, GLfloat f) const;
 
-        std::default_random_engine m_generator;
         std::vector<glm::vec3> m_ssaoKernel;
         std::vector<glm::vec3> m_ssaoNoise;
     };

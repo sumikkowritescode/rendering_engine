@@ -65,16 +65,16 @@ namespace Framework {
 
     void LightController::RenderLightBox(const glm::mat4 &projection, const glm::mat4 &view, glm::mat4 &model) {
         m_shaderLightBox.Use();
-        glUniformMatrix4fv(glGetUniformLocation(m_shaderLightBox.m_program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(glGetUniformLocation(m_shaderLightBox.m_program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+        m_shaderLightBox.SetMatrix("projection", projection);
+        m_shaderLightBox.SetMatrix("view", view);
         for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
         {
             it->Position = glm::vec4(glm::inverse(view) * it->Position);
             model = glm::mat4();
             model = glm::translate(model, glm::vec3(it->Position.x, it->Position.y, it->Position.z));
             model = glm::scale(model, glm::vec3(0.25f));
-            glUniformMatrix4fv(glGetUniformLocation(m_shaderLightBox.m_program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-            glUniform3fv(glGetUniformLocation(m_shaderLightBox.m_program, "lightColor"), 1, &it->Color[0]);
+            m_shaderLightBox.SetMatrix("model", model);
+            m_shaderLightBox.SetVector("lightColor", it->Color);
             m_lightCube.Render();
         }
     }

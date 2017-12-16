@@ -1,4 +1,6 @@
 #include "ssao.h"
+#include "../../utils/random_generator.h"
+
 #include <iostream>
 
 namespace Framework {
@@ -37,12 +39,14 @@ namespace Framework {
             std::cout << "SSAO Blur Framebuffer not complete!" << std::endl;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
         for (size_t i = 0; i < 64; i++)
         {
-            glm::vec3 sample(randomFloats(m_generator) * 2.0 - 1.0, randomFloats(m_generator) * 2.0 - 1.0, randomFloats(m_generator));
+            glm::vec3 sample(Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,
+                             Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,
+                             Utils::GetRandomFloat(0.0f, 1.0f)
+                            );
             sample = glm::normalize(sample);
-            sample *= randomFloats(m_generator);
+            sample *= Utils::GetRandomFloat(0.0f, 1.0f);
             GLfloat scale = GLfloat(i) / 64.0f;
 
             scale = lerp(0.1f, 1.0f, scale * scale);
@@ -52,7 +56,10 @@ namespace Framework {
 
         for (size_t i = 0; i < 16; i++)
         {
-            glm::vec3 noise(randomFloats(m_generator) * 2.0 - 1.0, randomFloats(m_generator) * 2.0 - 1.0, 0.0f);
+            glm::vec3 noise(Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,
+                            Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,
+                            0.0f
+                           );
             m_ssaoNoise.push_back(noise);
         }
 
