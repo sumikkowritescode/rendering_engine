@@ -47,13 +47,15 @@ add_executable(${project_name} ${SOURCE_FILES})
 target_link_libraries(${project_name} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${GLEW_LIBRARY} ${ASSIMP_LIBRARIES})
 set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/")
 
-if ( MSVC )
+if (MSVC)
     set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/)
     set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR}/bin/)
     set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/bin/)
 
     set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${project_name})
-endif ( MSVC )
+else (MSVC)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # For YouCompleteMe
+endif (MSVC)
 
 IF(WIN32)
     add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x86/assimp.dll $<TARGET_FILE_DIR:${project_name}>)
