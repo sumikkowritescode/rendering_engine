@@ -15,36 +15,14 @@ namespace Framework {
 
         m_lights.resize(m_lightCount);
 
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
+        for (auto& light : m_lights)
         {
-            it->Position = GetRandomPosition();
-            it->Color = GetRandomColor();
-        }
-
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
-        {
-            m_lightRandoms.push_back(glm::vec3(
-                                               Utils::GetRandomFloat(0.0f, 200.0f) / 100.0f,
-                                               Utils::GetRandomFloat(0.0f, 100.0f) / 100.0f,
-                                               Utils::GetRandomFloat(0.0f, 300.0f) / 100.0f
-                                            ));
+            light.Position = GetRandomPosition();
+            light.Color = GetRandomColor();
         }
 
         m_shaderLightingPass.Use();
         m_ssbo.Create(PointLight(), m_lightCount, 0, m_lights);
-    }
-
-    void LightController::RandomizePosition(const Time &time) {
-        auto lightRandomsIt = m_lightRandoms.begin();
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
-        {
-            it->Position.x += sin(lightRandomsIt->x + time.deltaTime) * 0.1f;
-            it->Position.y -= lightRandomsIt->y * 0.1f;
-            if (it->Position.y <= -5.0f)
-                it->Position.y = 300.0f;
-            it->Position.z += sin(lightRandomsIt->z + time.deltaTime) * 0.05f;
-            ++lightRandomsIt;
-        }
     }
 
     void LightController::SendBufferData(const glm::mat4 &view) {
@@ -56,7 +34,7 @@ namespace Framework {
             it->Quadratic = 1.8f;
 
             const GLfloat maxBrigthness = std::fmaxf(std::fmaxf(it->Color.r, it->Color.g), it->Color.b);
-            const GLfloat radius = (-it->Linear + sqrtf(it->Linear * it->Linear - 4 * it->Quadratic * (m_constant - (GLfloat)(256.0 / 5.0) * maxBrigthness))) / ((GLfloat)2.0f * it->Quadratic);
+            const GLfloat radius = (-it->Linear + sqrtf(it->Linear * it->Linear - 4 * it->Quadratic * (m_constant - static_cast<GLfloat>(256.0f / 5.0f) * maxBrigthness))) / (static_cast<GLfloat>(2.0f) * it->Quadratic);
             it->Radius = radius;
         }
 
@@ -72,7 +50,7 @@ namespace Framework {
             it->Position = glm::vec4(glm::inverse(view) * it->Position);
             model = glm::mat4();
             model = glm::translate(model, glm::vec3(it->Position.x, it->Position.y, it->Position.z));
-            model = glm::scale(model, glm::vec3(0.25f));
+            model = glm::scale(model, glm::vec3(5.0f));
             m_shaderLightBox.SetMatrix("model", model);
             m_shaderLightBox.SetVector("lightColor", it->Color);
             m_lightCube.Render();

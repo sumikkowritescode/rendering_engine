@@ -1,9 +1,9 @@
 #include "scene.h"
 
 namespace Framework {
-	Scene::Scene(Renderer &renderer) :
-		m_shadowMap(4096, 4096),
-		m_sunLightPos(glm::vec3(0.0f, 500.0f, 72.581f)),
+    Scene::Scene(Renderer &renderer) :
+        m_shadowMap(4096, 4096),
+        m_sunLightPos(glm::vec3(0.0f, 500.0f, 72.581f)),
         m_sunLightColor(glm::vec3(1.0f, 1.0f, 1.0f)),
         m_zNearShadow(10.0f),
         m_zFarShadow(2000.0f),
@@ -95,8 +95,6 @@ namespace Framework {
     void Scene::LightingPass(int drawMode, GLfloat ambience, Camera &camera, Renderer &renderer, const Time &time) {
         m_ssao.CreateTexture(m_gbuffer, m_fsQuad, m_projMatrix, renderer);
         m_ssao.BlurTexture(m_fsQuad, renderer);
-
-        m_lightController.RandomizePosition(time);
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_postProcess.GetFBO());
             renderer.SetViewport();
