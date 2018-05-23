@@ -38,7 +38,7 @@ const Uint8 *m_keyboardState = SDL_GetKeyboardState(nullptr);
 void UpdateImgui(SDL_Window* &window, Framework::Scene &scene, SDL_GLContext &glcontext);
 void GetKeyboard(const Framework::Time &time);
 void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContext &glcontext);
-void UpdateObjects(std::vector<Framework::RenderObject> &m_RenderObjects);
+void UpdateObjects(std::vector<Framework::RenderObject> &renderObjects);
 
 int main(int, char**)
 {
@@ -114,7 +114,7 @@ int main(int, char**)
                     m_mouseYOffset = (GLfloat)(g_renderer.GetScreenHeight() / 2.0f) - (GLfloat)m_mouseYPos;
 
                     camera.ProcessMouseMovement(m_mouseXOffset, m_mouseYOffset, g_mouseSensitivity);
-                    SDL_WarpMouseInWindow(window, (g_renderer.GetScreenWidth()/2), (g_renderer.GetScreenHeight()/2)); // Lock cursor in the middle
+                    SDL_WarpMouseInWindow(window, (g_renderer.GetScreenWidth() / 2), (g_renderer.GetScreenHeight()/2)); // Lock cursor in the middle
                 }
             }
         }
@@ -212,7 +212,7 @@ void UpdateImgui(SDL_Window* &window, Framework::Scene &scene, SDL_GLContext &gl
     
         if (ImGui::CollapsingHeader("SSAO Settings"))
         {
-			int   kernelSize = scene.m_ssao.GetKernelSize();
+            int   kernelSize = scene.m_ssao.GetKernelSize();
             float radius = scene.m_ssao.GetRadius();
             float power = scene.m_ssao.GetPower();
 
@@ -286,13 +286,14 @@ void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContex
     g_renderer.SetProjectionMatrix(camera);
 }
 
-void UpdateObjects(std::vector<Framework::RenderObject> &m_RenderObjects) {
-        std::vector<Framework::RenderObject>::iterator it = m_RenderObjects.begin();
-        (it + 1)->m_position = glm::vec3(1.0f, (sin(SDL_GetTicks() * 0.001f * 3.0f) * 50.0f) + 100.0f, 1.0f);
-        (it + 1)->m_rotation += glm::vec3(0.0f, 1.0f, 0.0f);
-        (it + 1)->m_angle += float(2.0f);
+void UpdateObjects(std::vector<Framework::RenderObject> &renderObjects) {
+        std::vector<Framework::RenderObject>::iterator it = renderObjects.begin();
 
-        (it + 2)->m_position = glm::vec3(1.0f, 160.0f, -40.0f);
-        (it + 2)->m_rotation += glm::vec3(1.0f, 0.0f, 1.0f);
-        (it + 2)->m_angle += float(15.0f);
+        (it + 1)->SetPosition(glm::vec3(1.0f, (sin(SDL_GetTicks() * 0.001f * 3.0f) * 50.0f) + 100.0f, 1.0f));
+        (it + 1)->SetRotation((it+1)->GetRotation() + glm::vec3(0.0f, 1.0f, 0.0f));
+        (it + 1)->SetAngle((it + 1)->GetAngle() +  float(2.0f));
+
+        (it + 2)->SetPosition(glm::vec3(1.0f, 160.0f, -40.0f));
+        (it + 2)->SetRotation((it + 2)->GetRotation() + glm::vec3(1.0f, 0.0f, 1.0f));
+        (it + 2)->SetAngle((it + 2)->GetAngle() + float(15.0f));
 }

@@ -54,19 +54,19 @@ namespace Framework {
             m_gbuffer.GetShader().SetMatrix("projMatrix", m_projMatrix);
 
             // Render each object in the scene and pass their matrices to the m_gbuffer shader
-            for (auto it = renderObjects.begin(); it != renderObjects.end(); ++it)
+            for (auto& object : renderObjects)
             {
                 m_modelMatrix = glm::mat4();
-                m_modelMatrix = glm::translate(m_modelMatrix, it->m_position);
-                m_modelMatrix = glm::scale(m_modelMatrix, it->m_scale);
-                m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(it->m_angle), it->m_rotation);
-                it->m_modelViewMatrix = m_viewMatrix * m_modelMatrix;
+                m_modelMatrix = glm::translate(m_modelMatrix, object.GetPosition());
+                m_modelMatrix = glm::scale(m_modelMatrix, object.GetScale());
+                m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(object.GetAngle()), object.GetRotation());
+                object.SetModelViewMatrix(m_viewMatrix * m_modelMatrix);
 
-                m_gbuffer.GetShader().SetMatrix("modelViewMatrix", it->m_modelViewMatrix);
-                m_gbuffer.GetShader().SetMatrix("prevModelViewMatrix", it->m_prevModelViewMatrix);
+                m_gbuffer.GetShader().SetMatrix("modelViewMatrix", object.GetModelViewMatrix());
+                m_gbuffer.GetShader().SetMatrix("prevModelViewMatrix", object.GetPreviousModelViewMatrix());
 
-                it->Draw(m_gbuffer.GetShader());
-                it->m_prevModelViewMatrix = it->m_modelViewMatrix;
+                object.Draw(m_gbuffer.GetShader());
+                object.SetPreviousModelViewMatrix(object.GetModelViewMatrix());
             }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -80,14 +80,14 @@ namespace Framework {
             glClear(GL_DEPTH_BUFFER_BIT);
             m_shadowMap.GetShader().Use();
             m_shadowMap.GetShader().SetMatrix("lightSpaceMatrix", m_lightSpaceMatrix);
-            for (auto it = renderObjects.begin(); it != renderObjects.end(); ++it)
+            for (const auto& object : renderObjects)
             {
                 m_modelMatrix = glm::mat4();
-                m_modelMatrix = glm::translate(m_modelMatrix, it->m_position);
-                m_modelMatrix = glm::scale(m_modelMatrix, it->m_scale);
-                m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(it->m_angle), it->m_rotation);
+                m_modelMatrix = glm::translate(m_modelMatrix, object.GetPosition());
+                m_modelMatrix = glm::scale(m_modelMatrix, object.GetScale());
+                m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(object.GetAngle()), object.GetRotation());
                 m_shadowMap.GetShader().SetMatrix("modelMatrix", m_modelMatrix);
-                it->Draw(m_shadowMap.GetShader());
+                object.Draw(m_shadowMap.GetShader());
             }
         m_shadowMap.Unbind();
     }

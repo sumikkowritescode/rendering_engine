@@ -31,8 +31,8 @@ namespace Framework {
             glm::vec3 Bitangent;
         };
 
-        Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures);
-        void Draw(Shader &shader);
+        Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, const std::vector<Texture>& textures);
+        void Draw(Shader& shader) const;
 
     private:
         void SetupMesh();

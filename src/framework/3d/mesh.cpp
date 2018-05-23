@@ -9,22 +9,22 @@
 
 
 namespace Framework {
-    Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures) :
-	m_vertices(vertices),
-	m_indices(indices),
-	m_textures(textures)
+    Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, const std::vector<Texture>& textures) :
+    m_vertices(vertices),
+    m_indices(indices),
+    m_textures(textures)
     {
         SetupMesh();
     }
 
-    void Mesh::Draw(Shader &shader)
+    void Mesh::Draw(Shader &shader) const
     {
         GLuint diffuseNr = 1;
         GLuint specularNr = 1;
         GLuint normalNr = 1;
         GLuint heightNr = 1;
 
-        for(GLuint i = 0; i < m_textures.size(); i++)
+        for(size_t i = 0; i < m_textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
             std::stringstream ss;
@@ -49,7 +49,7 @@ namespace Framework {
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
-        for (GLuint i = 0; i < m_textures.size(); i++)
+        for (size_t i = 0; i < m_textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, 0);

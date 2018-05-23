@@ -84,6 +84,7 @@ namespace Framework {
             glBindTexture(GL_TEXTURE_2D, m_firstIteration ? m_colorBuffers[1] : m_pingpongColorbuffers[!m_horizontal]);
             fsQuad.Render();
             m_horizontal = !m_horizontal;
+
             if (m_firstIteration)
                 m_firstIteration = false;
         }
