@@ -132,7 +132,7 @@ int main(int, char**)
         scene.PostProcessPass(u_useBloom, u_useMotionBlur, u_exposure, u_motionScale, camera, g_renderer);
 
         if(m_shadowDebug)
-            scene.m_shadowMap.RenderDebug(scene.m_fsQuad, scene.GetShadowNear(), scene.GetShadowFar(), g_renderer);
+            scene.m_shadowMap.RenderDebug(scene.m_fsQuad, scene.GetShadowNearPlane(), scene.GetShadowFarPlane(), g_renderer);
 
         ImGui::Render();
         SDL_GL_SwapWindow(window);
@@ -243,15 +243,15 @@ void UpdateImgui(SDL_Window* &window, Framework::Scene &scene, SDL_GLContext &gl
     
         if (ImGui::CollapsingHeader("Shadowmap Settings"))
         {
-            float zNearShadow = scene.GetShadowNear();
-            float zFarShadow = scene.GetShadowFar();
+            float zNearShadow = scene.GetShadowNearPlane();
+            float zFarShadow = scene.GetShadowFarPlane();
 
             if (ImGui::Button("Shadowmap Debug")) m_shadowDebug ^= 1;
             ImGui::SliderFloat("Shadowmap zNear", &zNearShadow, -500.0f, 500.0f);
             ImGui::SliderFloat("Shadowmap zFar", &zFarShadow, 10.0f, 2000.0f);
 
-            scene.SetShadowNear(zNearShadow);
-            scene.SetShadowFar(zFarShadow);
+            scene.SetShadowNearPlane(zNearShadow);
+            scene.SetShadowFarPlane(zFarShadow);
 
             if (ImGui::Button("Reload Shaders")) scene.m_shadowMap.ReloadShaders();
         }

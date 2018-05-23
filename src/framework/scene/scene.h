@@ -26,22 +26,21 @@ namespace Framework {
         void Init();
         void ReloadLightingPass();
 
-        void GeometryPass(std::vector<RenderObject> &renderObjects, Camera &camera, Renderer &renderer);
-        void ShadowmapPass(std::vector<RenderObject> &renderObjects);
-        void LightingPass(int drawMode, GLfloat ambience, Camera &camera, Renderer &renderer, const Time &time);
+        void GeometryPass(std::vector<RenderObject>& renderObjects, Camera &camera, Renderer& renderer);
+        void ShadowmapPass(std::vector<RenderObject>& renderObjects);
+        void LightingPass(int drawMode, GLfloat ambience, Camera& camera, Renderer& renderer, const Time& time);
 
         void RenderLights(Renderer &renderer);
         void RenderSkybox(Camera &camera);
         void PostProcessPass(bool useBloom, bool useMotionBlur, GLfloat exposure, GLfloat motionScale, Camera &camera, Renderer &renderer);
 
-        GLfloat GetShadowNear() const;
-        void SetShadowNear(GLfloat near);
-
-        GLfloat GetShadowFar() const;
-        void SetShadowFar(GLfloat far);
-
         glm::vec3 GetSunLightPos() const;
+        GLfloat GetShadowNearPlane() const;
+        GLfloat GetShadowFarPlane() const;
+
         void SetSunLightPos(const glm::vec3 &position);
+        void SetShadowNearPlane(GLfloat near);
+        void SetShadowFarPlane(GLfloat far);
 
         SSAO        m_ssao;
         PostProcess m_postProcess;
@@ -49,16 +48,15 @@ namespace Framework {
         ShadowMap   m_shadowMap;
 
     private:
-        glm::mat4   m_projMatrix, m_viewMatrix, m_modelMatrix;
+        glm::mat4   m_projectionMatrix, m_viewMatrix, m_modelMatrix;
         glm::mat4   m_lightProjectionMatrix, m_lightViewMatrix;
         glm::mat4   m_lightSpaceMatrix;
         glm::mat4   m_modelViewMatrix;
-        glm::mat4   m_prevModelViewMatrix;
 
         glm::vec3   m_sunLightPos;
         glm::vec3   m_sunLightColor;
 
-        GLfloat     m_zNearShadow, m_zFarShadow;
+        GLfloat     m_shadowNearPlane, m_shadowFarPlane;
 
         Shader      m_shaderLightingPass;
         Shader      m_shaderLightBox;
