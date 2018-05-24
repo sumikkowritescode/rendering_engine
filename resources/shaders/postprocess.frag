@@ -57,12 +57,10 @@ void main()
     vec3 bloomColor = texture(bloomBlurTex, TexCoords).rgb;
     vec3 result = vec3(0.0f);
 
-/*
     if(useMotionBlur)
         hdrColor = MotionBlur();
     else
         hdrColor = texture(sceneTex, TexCoords).rgb;
-*/
 
     if(useBloom)
         hdrColor += bloomColor;

@@ -142,7 +142,7 @@ void main()
 {
     vec3 result = vec3(0.0f);
     // Calculate little lights
-    //result += calcSpotLights();
+    result += calcSpotLights();
 
     // Add directional sun light
     result += calcSunLight();
