@@ -135,7 +135,7 @@ namespace Framework {
     std::vector<Mesh::Texture> Model::LoadMaterialTextures(const aiMaterial* material, const aiTextureType type, const std::string &typeName) {
         std::vector<Mesh::Texture> textures;
 
-        for (size_t i = 0; i < material->GetTextureCount(type); i++)
+        for (GLuint i = 0; i < material->GetTextureCount(type); i++)
         {
             aiString texturePath;
             material->GetTexture(type, i, &texturePath);

@@ -24,7 +24,7 @@ namespace Framework {
         GLuint normalNr = 1;
         GLuint heightNr = 1;
 
-        for(size_t i = 0; i < m_textures.size(); i++)
+        for(GLuint i = 0; i < m_textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
             std::stringstream ss;
@@ -49,7 +49,7 @@ namespace Framework {
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
-        for (size_t i = 0; i < m_textures.size(); i++)
+        for (GLuint i = 0; i < m_textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, 0);

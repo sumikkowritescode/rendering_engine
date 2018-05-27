@@ -5,8 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../../utils/random_generator.h"
 
-#include <iostream>
-
 namespace Framework {
     LightController::LightController(GLuint lightCount) :
         m_lightCount(lightCount),
