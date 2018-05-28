@@ -59,12 +59,12 @@ int main(int, char**)
         camera.SetPlanes(1.0f, 750.0f);
 
         ResizeWindow(1024, 768, window, glcontext);
+
         g_firstInit = false;
     }
 
     glewExperimental = GL_TRUE;
     glewInit();
-    glGetError();
     ImGui_ImplSdlGL3_Init(window);
 
     glEnable(GL_DEPTH_TEST);
@@ -120,6 +120,7 @@ int main(int, char**)
         }
 
         UpdateImgui(window, scene, glcontext);
+
         GetKeyboard(time);
 
         UpdateObjects(renderObjects);
@@ -130,6 +131,8 @@ int main(int, char**)
         scene.RenderLights(g_renderer);
         scene.RenderSkybox(camera);
         scene.PostProcessPass(u_useBloom, u_useMotionBlur, u_exposure, u_motionScale, camera, g_renderer);
+
+        std::cout << glGetError() << std::endl;
 
         if(m_shadowDebug)
             scene.m_shadowMap.RenderDebug(scene.m_fsQuad, scene.GetShadowNearPlane(), scene.GetShadowFarPlane(), g_renderer);
@@ -183,7 +186,7 @@ void GetKeyboard(const Framework::Time &time) {
         u_drawMode = 6;
 }
 
-void UpdateImgui(SDL_Window* &window, Framework::Scene &scene, SDL_GLContext &glcontext) {
+void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& glcontext) {
     ImGui_ImplSdlGL3_NewFrame(window);
 
     if (m_showMenuPanel)

@@ -11,7 +11,7 @@ out VERT_OUT {
     vec4 vPrevPosition;
 } vert_out;
 
-uniform mat4 projMatrix;
+uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 prevModelViewMatrix;
 
@@ -24,8 +24,8 @@ void main()
     vert_out.TexCoords = texCoords;
     vert_out.Normal = normalMatrix * normal;
 
-    vert_out.vPosition = projMatrix * modelViewMatrix * vec4(position, 1.0f);
-    vert_out.vPrevPosition = projMatrix * prevModelViewMatrix * vec4(position, 1.0f);
+    vert_out.vPosition = projectionMatrix * modelViewMatrix * vec4(position, 1.0f);
+    vert_out.vPrevPosition = projectionMatrix * prevModelViewMatrix * vec4(position, 1.0f);
 
     gl_Position = vert_out.vPosition;
 

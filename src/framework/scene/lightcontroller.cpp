@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "../../utils/random_generator.h"
+#include <iostream>
 
 namespace Framework {
     LightController::LightController(GLuint lightCount) :
@@ -33,8 +34,8 @@ namespace Framework {
             light.Linear = 1.2f;
             light.Quadratic = 1.8f;
 
-            const GLfloat maxBrigthness = std::fmaxf(std::fmaxf(light.Color.r, light.Color.g), light.Color.b);
-            const GLfloat radius = (-light.Linear + sqrtf(light.Linear * light.Linear - 4 * light.Quadratic * (m_constant - static_cast<GLfloat>(256.0f / 5.0f) * maxBrigthness))) / (static_cast<GLfloat>(2.0f) * light.Quadratic);
+            const GLfloat maxBrightness = std::fmaxf(std::fmaxf(light.Color.r, light.Color.g), light.Color.b);
+            const GLfloat radius = (-light.Linear + sqrtf(light.Linear * light.Linear - 4 * light.Quadratic * (m_constant - static_cast<GLfloat>(256.0f / 5.0f) * maxBrightness))) / (static_cast<GLfloat>(2.0f) * light.Quadratic);
             light.Radius = radius;
         }
 
@@ -51,6 +52,7 @@ namespace Framework {
             model = glm::mat4();
             model = glm::translate(model, glm::vec3(light.Position.x, light.Position.y, light.Position.z));
             model = glm::scale(model, glm::vec3(5.0f));
+
             m_shaderLightBox.SetMatrix("model", model);
             m_shaderLightBox.SetVector("lightColor", light.Color);
             m_lightCube.Render();

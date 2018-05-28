@@ -50,9 +50,9 @@ namespace Framework {
             renderer.SetProjectionMatrix(camera);
             m_projectionMatrix = renderer.GetProjectionMatrix();
             m_viewMatrix = camera.GetViewMatrix();
-            m_gbuffer.GetShader().SetMatrix("projMatrix", m_projectionMatrix);
+            m_gbuffer.GetShader().SetMatrix("projectionMatrix", m_projectionMatrix);
 
-            // Render each object in the scene and pass their matrices to the m_gbuffer shader
+            // Render each object in the scene and pass their matrices to the GBuffer shader
             for (auto& object : renderObjects)
             {
                 m_modelMatrix = glm::mat4();
