@@ -2,7 +2,6 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 
 namespace Framework {
     Camera::Camera(const glm::vec3 &position, const glm::vec3 &up, GLfloat yaw, GLfloat pitch) :

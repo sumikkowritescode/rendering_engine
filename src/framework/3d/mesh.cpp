@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
