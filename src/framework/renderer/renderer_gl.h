@@ -10,7 +10,7 @@ namespace Framework {
     class Renderer {
     public:
         void SetViewport();
-        void SetProjectionMatrix(Camera &m_camera);
+        void SetProjectionMatrix(const Camera& camera);
         void SetResolution(GLuint width, GLuint height);
         glm::mat4 GetProjectionMatrix() const;
         int GetScreenWidth() const;
@@ -19,7 +19,7 @@ namespace Framework {
     private:
         GLuint    m_width;
         GLuint    m_height;
-        glm::mat4 u_projMatrix;
+        glm::mat4 m_projectionMatrix;
     };
 }
 

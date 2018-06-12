@@ -11,13 +11,13 @@ namespace Framework {
         ~GBuffer();
         void Init(Renderer &m_renderer);
 
-        GLuint GetFBO() const;
+        GLuint GetFBO();
         GLuint GetPosDepth() const;
         GLuint GetNormal() const;
         GLuint GetAlbedoSpec() const;
         GLuint GetVelocity() const;
 
-        Shader &GetShader();
+        Shader& GetShader();
 
         void SetTextures();
         void ReloadShader();

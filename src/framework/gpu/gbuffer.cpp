@@ -67,7 +67,7 @@ namespace Framework {
         glDeleteTextures(1, &m_velocityTexture);
     }
 
-    GLuint GBuffer::GetFBO() const {
+    GLuint GBuffer::GetFBO() {
         return m_fbo;
     }
 
@@ -87,7 +87,7 @@ namespace Framework {
         return m_velocityTexture;
     }
 
-    Shader &GBuffer::GetShader() {
+    Shader& GBuffer::GetShader() {
         return m_shader;
     }
 

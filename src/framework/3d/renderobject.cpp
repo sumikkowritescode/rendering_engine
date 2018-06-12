@@ -1,8 +1,8 @@
 #include "renderobject.h"
 
 namespace Framework {
-    RenderObject::RenderObject(const std::string &modelPath, const glm::vec3 pos, const glm::vec3 scale, const glm::vec3 rot, const float angle) :
-        m_model(modelPath), m_position(pos), m_scale(scale), m_rotation(rot), m_angle(angle)
+    RenderObject::RenderObject(const std::string &modelPath, const glm::vec3 position, const glm::vec3 scale, const glm::vec3 rotation, const float angle) :
+        m_model(modelPath), m_position(position), m_scale(scale), m_rotation(rotation), m_angle(angle)
     {
     }
 
@@ -36,12 +36,12 @@ namespace Framework {
         return m_angle;
     }
 
-    void RenderObject::SetPosition(const glm::vec3 &position)
+    void RenderObject::SetPosition(const glm::vec3& position)
     {
         m_position = position;
     }
 
-    void RenderObject::SetRotation(const glm::vec3 &rotation)
+    void RenderObject::SetRotation(const glm::vec3& rotation)
     {
         m_rotation = rotation;
     }

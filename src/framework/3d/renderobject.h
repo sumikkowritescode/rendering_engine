@@ -14,7 +14,7 @@
 namespace Framework {
     class RenderObject {
     public:
-        RenderObject(const std::string& modelPath, const glm::vec3 pos = glm::vec3(0.0f), const glm::vec3 scale = glm::vec3(0.0f), const glm::vec3 rot = glm::vec3(0.0f), const float angle = 0.0f);
+        RenderObject(const std::string& modelPath, const glm::vec3 position = glm::vec3(0.0f), const glm::vec3 scale = glm::vec3(0.0f), const glm::vec3 rotation = glm::vec3(0.0f), const float angle = 0.0f);
 
         glm::vec3 GetPosition() const;
         glm::vec3 GetRotation() const;

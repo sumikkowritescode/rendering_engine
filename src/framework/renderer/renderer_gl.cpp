@@ -5,12 +5,12 @@ namespace Framework {
         glViewport(0, 0, m_width, m_height);
     }
 
-    void Renderer::SetProjectionMatrix(Camera &m_camera) {
-        u_projMatrix = glm::perspective(m_camera.GetFov(), (GLfloat)m_width / (GLfloat)m_height, m_camera.GetNearPlane(), m_camera.GetFarPlane());
+    void Renderer::SetProjectionMatrix(const Camera& camera) {
+        m_projectionMatrix = glm::perspective(camera.GetFov(), static_cast<GLfloat>(m_width) / static_cast<GLfloat>(m_height), camera.GetNearPlane(), camera.GetFarPlane());
     }
 
     glm::mat4 Renderer::GetProjectionMatrix() const {
-        return u_projMatrix;
+        return m_projectionMatrix;
     }
 
     // Move these to a screen manager or something later

@@ -35,10 +35,10 @@ float g_moveSpeed = 60.0f;
 const Uint8 *m_keyboardState = SDL_GetKeyboardState(nullptr);
 
 // Function prototypes
-void UpdateImgui(SDL_Window* &window, Framework::Scene &scene, SDL_GLContext &glcontext);
-void GetKeyboard(const Framework::Time &time);
-void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContext &glcontext);
-void UpdateObjects(std::vector<Framework::RenderObject> &renderObjects);
+void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& glcontext);
+void GetKeyboard(const Framework::Time& time);
+void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContext& glcontext);
+void UpdateObjects(std::vector<Framework::RenderObject>& renderObjects);
 
 int main(int, char**)
 {
@@ -129,10 +129,8 @@ int main(int, char**)
         scene.ShadowmapPass(renderObjects);
         scene.LightingPass(u_drawMode, u_ambience, camera, g_renderer, time);
         scene.RenderLights(g_renderer);
-        scene.RenderSkybox(camera);
-        scene.PostProcessPass(u_useBloom, u_useMotionBlur, u_exposure, u_motionScale, camera, g_renderer);
-
-        std::cout << glGetError() << std::endl;
+        //scene.RenderSkybox(camera);
+        //scene.PostProcessPass(u_useBloom, u_useMotionBlur, u_exposure, u_motionScale, camera, g_renderer);
 
         if(m_shadowDebug)
             scene.m_shadowMap.RenderDebug(scene.m_fsQuad, scene.GetShadowNearPlane(), scene.GetShadowFarPlane(), g_renderer);
