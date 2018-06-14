@@ -117,19 +117,16 @@ vec3 calcSpotLights() {
     // This way the light keeps it's real color instead of being bright white.
     for (int i = 0; i < NR_LIGHTS; ++i)
     {
-        // Calculate distance between light source and current fragment
+        // Distance between light source and current fragment
         float distance = length(lights[i].Position - FragPos);
 
-        // Diffuse
         vec3 lightDir = normalize(lights[i].Position - FragPos);
         vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * (lights[i].Color - vec3(1.5f));
 
-        // Specular
         vec3 halfwayDir = normalize(lightDir + viewDir);
         float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
         vec3 specular = (lights[i].Color - vec3(1.5f)) * spec * Specular;
 
-        // Attenuation
         float attenuation = constant / (constant + lights[i].Linear * distance + lights[i].Quadratic * (distance * distance));
         diffuse  *= attenuation;
         specular *= attenuation;
@@ -141,10 +138,8 @@ vec3 calcSpotLights() {
 void main()
 {
     vec3 result = vec3(0.0f);
-    // Calculate little lights
-    result += calcSpotLights();
 
-    // Add directional sun light
+    result += calcSpotLights();
     result += calcSunLight();
 
     // Send bright stuff for post processing
@@ -155,7 +150,6 @@ void main()
     else
         BrightColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    // Different rendering modes
     if(drawMode == 1)
         FragColor = vec4(result, 1.0f);
     else if(drawMode == 2)
