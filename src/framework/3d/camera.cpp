@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Framework {
-    Camera::Camera(const glm::vec3 &position, const glm::vec3 &up, GLfloat yaw, GLfloat pitch) :
+    Camera::Camera(const glm::vec3& position, const glm::vec3& up, GLfloat yaw, GLfloat pitch) :
         m_position(position),
         m_worldUp(up),
         m_front(glm::vec3(0.0f, 0.0f, -1.0f)),
@@ -25,7 +25,7 @@ namespace Framework {
     {
     }
 
-    void Camera::ProcessKeyboard(const Camera_Movement &direction, GLfloat m_movementSpeed) {
+    void Camera::ProcessKeyboard(const CameraMovement& direction, GLfloat m_movementSpeed) {
         if (direction == FORWARD)
             m_position += m_front * m_movementSpeed;
         if (direction == BACKWARD)
@@ -36,12 +36,12 @@ namespace Framework {
             m_position += m_right * m_movementSpeed;
     }
 
-    void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLfloat sensitivity, GLboolean constrainPitch) {
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
+    void Camera::ProcessMouseMovement(GLfloat xOffset, GLfloat yOffset, GLfloat sensitivity, GLboolean constrainPitch) {
+        xOffset *= sensitivity;
+        yOffset *= sensitivity;
 
-        m_yaw   += xoffset;
-        m_pitch += yoffset;
+        m_yaw   += xOffset;
+        m_pitch += yOffset;
 
         if (constrainPitch)
         {
@@ -54,9 +54,9 @@ namespace Framework {
         UpdateCameraVectors();
     }
 
-    void Camera::ProcessMouseScroll(GLfloat yoffset) {
+    void Camera::ProcessMouseScroll(GLfloat yOffset) {
         if (m_fov >= 1.0f && m_fov <= 45.0f)
-            m_fov -= yoffset;
+            m_fov -= yOffset;
 
         if (m_fov <= 1.0f)
             m_fov = 1.0f;
@@ -65,9 +65,9 @@ namespace Framework {
             m_fov = 45.0f;
     }
 
-    void Camera::SetPlanes(GLfloat zNear, GLfloat zFar) {
-        m_zNear = zNear;
-        m_zFar =  zFar;
+    void Camera::SetPlanes(GLfloat nearPlane, GLfloat farPlane) {
+        m_nearPlane = nearPlane;
+        m_farPlane =  farPlane;
     }
 
     glm::mat4 Camera::GetViewMatrix() const {
@@ -83,11 +83,11 @@ namespace Framework {
     }
 
     GLfloat Camera::GetNearPlane() const {
-        return m_zNear;
+        return m_nearPlane;
     }
 
     GLfloat Camera::GetFarPlane() const {
-        return m_zFar;
+        return m_farPlane;
     }
 
     void Camera::UpdateCameraVectors() {

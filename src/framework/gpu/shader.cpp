@@ -12,6 +12,7 @@ namespace Framework {
         m_vShaderFile.exceptions(std::ifstream::failbit);
         m_fShaderFile.exceptions(std::ifstream::failbit);
         m_gShaderFile.exceptions(std::ifstream::failbit);
+
         try
         {
             m_vShaderFile.open(m_vertexPath);
@@ -43,7 +44,7 @@ namespace Framework {
         }
         catch (const std::ios_base::failure &e)
         {
-            std::cerr << "Exception occured when reading a shader file\n"
+            std::cerr << "Exception occurred when reading a shader file\n"
                 << e.what() << "\n"
                 << "Please check that all of the shader files can be found."
                 << std::endl;
@@ -111,45 +112,63 @@ namespace Framework {
 
     void Shader::Use() {
         glUseProgram(m_program);
+        CheckForErrors();
     }
 
     void Shader::Reload() {
         Load(m_vertexPath, m_fragmentPath, m_geometryPath);
+        CheckForErrors();
     }
 
     void Shader::SetInt(const GLchar *name, int value) {
         glUniform1i(glGetUniformLocation(m_program, name), value);
+        CheckForErrors();
     }
 
     void Shader::SetBool(const GLchar *name, bool value) {
         glUniform1i(glGetUniformLocation(m_program, name), value);
+        CheckForErrors();
     }
 
     void Shader::SetFloat(const GLchar *name, float value) {
         glUniform1f(glGetUniformLocation(m_program, name), value);
+        CheckForErrors();
     }
 
     void Shader::SetVector(const GLchar *name, const glm::vec2 &value) {
         glUniform2fv(glGetUniformLocation(m_program, name), 1, &value[0]);
+        CheckForErrors();
     }
 
     void Shader::SetVector(const GLchar *name, const glm::vec3 &value) {
         glUniform3fv(glGetUniformLocation(m_program, name), 1, &value[0]);
+        CheckForErrors();
     }
 
     void Shader::SetVector(const GLchar *name, const glm::vec4 &value) {
         glUniform4fv(glGetUniformLocation(m_program, name), 1, &value[0]);
+        CheckForErrors();
     }
 
     void Shader::SetMatrix(const GLchar *name, const glm::mat2 &value) {
         glUniformMatrix2fv(glGetUniformLocation(m_program, name), 1, GL_FALSE, glm::value_ptr(value));
+        CheckForErrors();
     }
 
     void Shader::SetMatrix(const GLchar *name, const glm::mat3 &value) {
         glUniformMatrix3fv(glGetUniformLocation(m_program, name), 1, GL_FALSE, glm::value_ptr(value));
+        CheckForErrors();
     }
 
     void Shader::SetMatrix(const GLchar *name, const glm::mat4 &value) {
         glUniformMatrix4fv(glGetUniformLocation(m_program, name), 1, GL_FALSE, glm::value_ptr(value));
+        CheckForErrors();
+    }
+
+    void Shader::CheckForErrors() {
+        GLenum errorCode = glGetError();
+
+        if (errorCode != GL_NO_ERROR)
+            std::cout << errorCode << std::endl;
     }
 }

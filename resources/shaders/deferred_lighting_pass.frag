@@ -14,7 +14,7 @@ struct Light {
 
 const int NR_LIGHTS = 100;
 
-layout (std430, binding = 0) buffer CircleSSBO {
+layout (std430, binding = 0) buffer LightSSBO {
     Light lights[];
 };
 
@@ -53,7 +53,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     // Perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 
-    projCoords = projCoords * 0.5 + 0.5;
+    projCoords = projCoords * 0.5f + 0.5f;
 
     float closestDepth = texture(shadowMapTex, projCoords.xy).r;
 
@@ -63,24 +63,24 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(sunLight.Position - FragPos);
 
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    float bias = max(0.05f * (1.0f - dot(normal, lightDir)), 0.005f);
 
     // PCF
-    float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(shadowMapTex, 0);
+    float shadow = 0.0f;
+    vec2 texelSize = 1.0f / textureSize(shadowMapTex, 0);
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMapTex, projCoords.xy + vec2(x, y) * texelSize).r;
-            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+            shadow += currentDepth - bias > pcfDepth ? 1.0f : 0.0f;
         }
     }
-    shadow /= 9.0;
+    shadow /= 9.0f;
 
     // Keep the shadow at 0.0 when outside the zFar region of the light's frustum
-    if(projCoords.z > 1.0)
-       shadow = 0.0;
+    if(projCoords.z > 1.0f)
+       shadow = 0.0f;
 
     return shadow;
 }
@@ -90,13 +90,13 @@ vec3 calcSunLight() {
     vec3 viewDir = normalize(-FragPos.xyz);
 
     vec3 lightDir = normalize(sunLight.Position -  FragPos);
-    vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * sunLight.Color;
+    vec3 diffuse = max(dot(Normal, lightDir), 0.0f) * Diffuse * sunLight.Color;
 
     vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
+    float spec = pow(max(dot(Normal, halfwayDir), 0.0f), 16.0f);
     vec3 specular = sunLight.Color * spec * Specular;
 
-    float attenuation = 1.0;
+    float attenuation = 1.0f;
     diffuse *= attenuation;
     specular *= attenuation;
 
@@ -117,18 +117,16 @@ vec3 calcSpotLights() {
     // This way the light keeps it's real color instead of being bright white.
     for (int i = 0; i < NR_LIGHTS; ++i)
     {
-        // Calculate distance between light source and current fragment
+        // Distance between light source and current fragment
         float distance = length(lights[i].Position - FragPos);
-        // Diffuse
+
         vec3 lightDir = normalize(lights[i].Position - FragPos);
         vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * (lights[i].Color - vec3(1.5f));
 
-        // Specular
         vec3 halfwayDir = normalize(lightDir + viewDir);
         float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
         vec3 specular = (lights[i].Color - vec3(1.5f)) * spec * Specular;
 
-        // Attenuation
         float attenuation = constant / (constant + lights[i].Linear * distance + lights[i].Quadratic * (distance * distance));
         diffuse  *= attenuation;
         specular *= attenuation;
@@ -139,10 +137,9 @@ vec3 calcSpotLights() {
 
 void main()
 {
-    // Calculate little lights
-    vec3 result = calcSpotLights();
+    vec3 result = vec3(0.0f);
 
-    // Add directional sun light
+    result += calcSpotLights();
     result += calcSunLight();
 
     // Send bright stuff for post processing
@@ -153,7 +150,6 @@ void main()
     else
         BrightColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    // Different rendering modes
     if(drawMode == 1)
         FragColor = vec4(result, 1.0f);
     else if(drawMode == 2)

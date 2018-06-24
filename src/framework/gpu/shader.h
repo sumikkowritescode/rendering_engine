@@ -33,6 +33,8 @@ namespace Framework {
         GLuint m_program;
 
     private:
+        void CheckForErrors();
+
         std::string   m_vertexCode, m_fragmentCode, m_geometryCode;
         std::ifstream m_vShaderFile, m_fShaderFile, m_gShaderFile;
 

@@ -56,3 +56,5 @@ Win32
 sponza_crytek_original
 sponza_old
 compile_commands.json
+.idea
+*.cbp

@@ -15,66 +15,45 @@ namespace Framework {
 
         m_lights.resize(m_lightCount);
 
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
+        for (auto& light : m_lights)
         {
-            it->Position = GetRandomPosition();
-            it->Color = GetRandomColor();
-        }
-
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
-        {
-            m_lightRandoms.push_back(glm::vec3(
-                                               Utils::GetRandomFloat(0.0f, 200.0f) / 100.0f,
-                                               Utils::GetRandomFloat(0.0f, 100.0f) / 100.0f,
-                                               Utils::GetRandomFloat(0.0f, 300.0f) / 100.0f
-                                            ));
+            light.Position = GetRandomPosition();
+            light.Color = GetRandomColor();
         }
 
         m_shaderLightingPass.Use();
         m_ssbo.Create(PointLight(), m_lightCount, 0, m_lights);
     }
 
-    void LightController::RandomizePosition(const Time &time) {
-        auto lightRandomsIt = m_lightRandoms.begin();
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
+    void LightController::SendBufferData(const glm::mat4& view) {
+        for (auto& light : m_lights)
         {
-            it->Position.x += sin(lightRandomsIt->x + time.deltaTime) * 0.1f;
-            it->Position.y -= lightRandomsIt->y * 0.1f;
-            if (it->Position.y <= -5.0f)
-                it->Position.y = 300.0f;
-            it->Position.z += sin(lightRandomsIt->z + time.deltaTime) * 0.05f;
-            ++lightRandomsIt;
-        }
-    }
+            light.Position = glm::vec4(view * light.Position);
 
-    void LightController::SendBufferData(const glm::mat4 &view) {
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
-        {
-            it->Position = glm::vec4(view * it->Position);
+            light.Linear = 1.2f;
+            light.Quadratic = 1.8f;
 
-            it->Linear = 1.2f;
-            it->Quadratic = 1.8f;
-
-            const GLfloat maxBrigthness = std::fmaxf(std::fmaxf(it->Color.r, it->Color.g), it->Color.b);
-            const GLfloat radius = (-it->Linear + sqrtf(it->Linear * it->Linear - 4 * it->Quadratic * (m_constant - (GLfloat)(256.0 / 5.0) * maxBrigthness))) / ((GLfloat)2.0f * it->Quadratic);
-            it->Radius = radius;
+            const GLfloat maxBrightness = std::fmaxf(std::fmaxf(light.Color.r, light.Color.g), light.Color.b);
+            const GLfloat radius = (-light.Linear + sqrtf(light.Linear * light.Linear - 4 * light.Quadratic * (m_constant - static_cast<GLfloat>(256.0f / 5.0f) * maxBrightness))) / (static_cast<GLfloat>(2.0f) * light.Quadratic);
+            light.Radius = radius;
         }
 
         m_ssbo.SendData(PointLight(), m_lightCount, m_lights);
     }
 
-    void LightController::RenderLightBox(const glm::mat4 &projection, const glm::mat4 &view, glm::mat4 &model) {
+    void LightController::RenderLightBox(const glm::mat4& projection, const glm::mat4& view, glm::mat4& model) {
         m_shaderLightBox.Use();
         m_shaderLightBox.SetMatrix("projection", projection);
         m_shaderLightBox.SetMatrix("view", view);
-        for (auto it = m_lights.begin(); it != m_lights.end(); ++it)
+        for (auto& light : m_lights)
         {
-            it->Position = glm::vec4(glm::inverse(view) * it->Position);
+            light.Position = glm::vec4(glm::inverse(view) * light.Position);
             model = glm::mat4();
-            model = glm::translate(model, glm::vec3(it->Position.x, it->Position.y, it->Position.z));
-            model = glm::scale(model, glm::vec3(0.25f));
+            model = glm::translate(model, glm::vec3(light.Position.x, light.Position.y, light.Position.z));
+            model = glm::scale(model, glm::vec3(5.0f));
+
             m_shaderLightBox.SetMatrix("model", model);
-            m_shaderLightBox.SetVector("lightColor", it->Color);
+            m_shaderLightBox.SetVector("lightColor", light.Color);
             m_lightCube.Render();
         }
     }

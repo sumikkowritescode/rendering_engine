@@ -39,7 +39,7 @@ namespace Framework {
             std::cout << "SSAO Blur Framebuffer not complete!" << std::endl;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        for (size_t i = 0; i < 64; i++)
+        for (GLuint i = 0; i < 64; i++)
         {
             glm::vec3 sample(Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,
                              Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,
@@ -47,14 +47,14 @@ namespace Framework {
                             );
             sample = glm::normalize(sample);
             sample *= Utils::GetRandomFloat(0.0f, 1.0f);
-            GLfloat scale = GLfloat(i) / 64.0f;
+            GLfloat scale = static_cast<GLfloat>(i) / 64.0f;
 
             scale = lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
             m_ssaoKernel.push_back(sample);
         }
 
-        for (size_t i = 0; i < 16; i++)
+        for (GLuint i = 0; i < 16; i++)
         {
             glm::vec3 noise(Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,
                             Utils::GetRandomFloat(0.0f, 1.0f) * 2.0f - 1.0f,

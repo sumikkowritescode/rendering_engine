@@ -8,19 +8,19 @@
 namespace Framework {
     class Camera {
     public:
-        enum Camera_Movement {
+        enum CameraMovement {
             FORWARD,
             BACKWARD,
             LEFT,
             RIGHT
         };
 
-        Camera(const glm::vec3 &position, const glm::vec3 &up, GLfloat yaw, GLfloat pitch);
+        Camera(const glm::vec3& position, const glm::vec3& up, GLfloat yaw, GLfloat pitch);
         Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
 
-        void ProcessKeyboard(const Camera_Movement &direction, GLfloat m_movementSpeed);
-        void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLfloat sensitivity, GLboolean constrainPitch = true);
-        void ProcessMouseScroll(GLfloat yoffset);
+        void ProcessKeyboard(const CameraMovement& direction, GLfloat m_movementSpeed);
+        void ProcessMouseMovement(GLfloat xOffset, GLfloat yOffset, GLfloat sensitivity, GLboolean constrainPitch = true);
+        void ProcessMouseScroll(GLfloat yOffset);
         void SetPlanes(GLfloat zNear, GLfloat zFar);
 
         glm::mat4 GetViewMatrix() const;
@@ -41,7 +41,7 @@ namespace Framework {
         GLfloat m_pitch;
         GLfloat m_fov;
 
-        GLfloat m_zNear, m_zFar;
+        GLfloat m_nearPlane, m_farPlane;
 
         void UpdateCameraVectors();
     };

@@ -18,7 +18,7 @@ namespace Framework {
     class Model {
     public:
         Model(const std::string &path, const bool gamma = false);
-        void Draw(Shader &shader);
+        void Draw(Shader &shader) const;
         aiMesh* GetMesh() const;
 
     private:

@@ -34,7 +34,7 @@ namespace Framework {
         unsigned char* image;
 
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-        for(size_t i = 0; i < m_faces.size(); i++)
+        for(GLuint i = 0; i < m_faces.size(); i++)
         {
             image = stbi_load(m_faces[i], &width, &height, &numComponents, 3);
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);

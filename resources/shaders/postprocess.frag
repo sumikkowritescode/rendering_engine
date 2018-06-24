@@ -51,7 +51,9 @@ vec3 ACESFilm(vec3 x)
 void main()
 {
     const float gamma = 2.2f;
-    vec3 hdrColor = vec3(0.0f);
+    //vec3 hdrColor = vec3(0.0f);
+
+    vec3 hdrColor = texture(sceneTex, TexCoords).rgb;
     vec3 bloomColor = texture(bloomBlurTex, TexCoords).rgb;
     vec3 result = vec3(0.0f);
 

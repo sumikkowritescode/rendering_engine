@@ -2,22 +2,21 @@
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 
 
 namespace Framework {
-    Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices, const std::vector<Texture> &textures) :
-	m_vertices(vertices),
-	m_indices(indices),
-	m_textures(textures)
+    Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, const std::vector<Texture>& textures) :
+    m_vertices(vertices),
+    m_indices(indices),
+    m_textures(textures)
     {
         SetupMesh();
     }
 
-    void Mesh::Draw(Shader &shader)
+    void Mesh::Draw(Shader &shader) const
     {
         GLuint diffuseNr = 1;
         GLuint specularNr = 1;

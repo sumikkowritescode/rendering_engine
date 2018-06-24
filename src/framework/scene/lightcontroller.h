@@ -14,7 +14,6 @@ namespace Framework {
     class LightController {
     public:
         LightController(GLuint lightCount);
-        void RandomizePosition(const Time &time);
         void SendBufferData(const glm::mat4 &view);
         void RenderLightBox(const glm::mat4 &projection, const glm::mat4 &view, glm::mat4 &model);
 
@@ -23,7 +22,6 @@ namespace Framework {
         glm::vec4 GetRandomColor();
 
         std::vector<PointLight> m_lights;
-        std::vector<glm::vec3>  m_lightRandoms;
 
         int                     m_lightCount;
         const GLfloat           m_constant;

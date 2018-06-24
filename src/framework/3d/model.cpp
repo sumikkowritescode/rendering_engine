@@ -10,21 +10,21 @@
 #include <iostream>
 
 namespace Framework {
-    Model::Model(const std::string &path, const bool gamma) :
+    Model::Model(const std::string& path, const bool gamma) :
         m_gammaCorrection(gamma) {
         LoadModel(path);
     }
 
-    void Model::Draw(Shader &shader) {
-        for(GLuint i = 0; i < m_meshes.size(); i++)
-            m_meshes[i].Draw(shader);
+    void Model::Draw(Shader& shader) const {
+        for(const auto& mesh : m_meshes)
+            mesh.Draw(shader);
     }
 
     aiMesh *Model::GetMesh() const {
         return m_mesh;
     }
 
-    void Model::LoadModel(const std::string &path) {
+    void Model::LoadModel(const std::string& path) {
         const aiScene* scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
         if(!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -134,29 +134,30 @@ namespace Framework {
 
     std::vector<Mesh::Texture> Model::LoadMaterialTextures(const aiMaterial* material, const aiTextureType type, const std::string &typeName) {
         std::vector<Mesh::Texture> textures;
-        for(GLuint i = 0; i < material->GetTextureCount(type); i++)
+
+        for (GLuint i = 0; i < material->GetTextureCount(type); i++)
         {
-            aiString str;
-            material->GetTexture(type, i, &str);
+            aiString texturePath;
+            material->GetTexture(type, i, &texturePath);
 
-            GLboolean skip = false;
+            bool skipTexture = false;
 
-            for(GLuint j = 0; j < m_loadedTextures.size(); j++)
+            for (const auto &texture : m_loadedTextures)
             {
-                if(m_loadedTextures[j].path == str)
+                if (texture.path == texturePath)
                 {
-                    textures.push_back(m_loadedTextures[j]);
-                    skip = true;
+                    textures.push_back(texture);
+                    skipTexture = true;
                     break;
                 }
             }
 
-            if(!skip)
+            if (!skipTexture)
             {
                 Mesh::Texture texture;
-                texture.id = m_texture.Load(str.C_Str(), m_directory);
+                texture.id = m_texture.Load(texturePath.C_Str(), m_directory);
                 texture.type = typeName;
-                texture.path = str;
+                texture.path = texturePath;
                 textures.push_back(texture);
                 m_loadedTextures.push_back(texture);
             }
