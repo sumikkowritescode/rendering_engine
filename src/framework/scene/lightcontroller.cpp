@@ -48,7 +48,7 @@ namespace Framework {
         for (auto& light : m_lights)
         {
             light.Position = glm::vec4(glm::inverse(view) * light.Position);
-            model = glm::mat4();
+            model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(light.Position.x, light.Position.y, light.Position.z));
             model = glm::scale(model, glm::vec3(5.0f));
 

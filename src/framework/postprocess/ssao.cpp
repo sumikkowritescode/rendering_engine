@@ -95,7 +95,7 @@ namespace Framework {
         glBindTexture(GL_TEXTURE_2D, m_colorBufferBlur);
     }
 
-    void SSAO::CreateTexture(GBuffer &gbuffer, Quad &fsQuad, const glm::mat4 &projMatrix, Renderer &renderer) {
+    void SSAO::CreateTexture(GBuffer& gbuffer, Quad& fsQuad, const glm::mat4& projMatrix, Renderer& renderer) {
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
             renderer.SetViewport();
             glClear(GL_COLOR_BUFFER_BIT);

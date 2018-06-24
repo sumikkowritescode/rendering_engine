@@ -1,6 +1,11 @@
 #include "renderer_gl.h"
 
 namespace Framework {
+
+    Renderer::Renderer() :
+           m_projectionMatrix(1.0f)
+    {}
+
     void Renderer::SetViewport() {
         glViewport(0, 0, m_width, m_height);
     }

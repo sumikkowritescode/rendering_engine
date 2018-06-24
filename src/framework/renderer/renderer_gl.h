@@ -9,6 +9,8 @@
 namespace Framework {
     class Renderer {
     public:
+        Renderer();
+
         void SetViewport();
         void SetProjectionMatrix(const Camera& camera);
         void SetResolution(GLuint width, GLuint height);

@@ -1,7 +1,8 @@
 #include <SDL.h>
 
 #include "framework/3rdparty/imgui/imgui.h"
-#include "framework/3rdparty/imgui/imgui_impl_sdl_gl3.h"
+#include "framework/3rdparty/imgui/imgui_impl_sdl.h"
+#include "framework/3rdparty/imgui/imgui_impl_opengl3.h"
 
 #include "framework/base/time.h"
 
@@ -65,7 +66,13 @@ int main(int, char**)
 
     glewExperimental = GL_TRUE;
     glewInit();
-    ImGui_ImplSdlGL3_Init(window);
+
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui_ImplSDL2_InitForOpenGL(window, glcontext);
+    ImGui_ImplOpenGL3_Init();
+
+    ImGui::StyleColorsDark();
 
     glEnable(GL_DEPTH_TEST);
     std::cout << glGetString(GL_VERSION) << std::endl;
@@ -100,7 +107,7 @@ int main(int, char**)
 
         while (SDL_PollEvent(&event))
         {
-            ImGui_ImplSdlGL3_ProcessEvent(&event);
+            ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
                 quit = true;
 
@@ -136,10 +143,14 @@ int main(int, char**)
             scene.m_shadowMap.RenderDebug(scene.m_fsQuad, scene.GetShadowNearPlane(), scene.GetShadowFarPlane(), g_renderer);
 
         ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(window);
     }
 
-    ImGui_ImplSdlGL3_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -185,7 +196,9 @@ void GetKeyboard(const Framework::Time &time) {
 }
 
 void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& glcontext) {
-    ImGui_ImplSdlGL3_NewFrame(window);
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+    ImGui::NewFrame();
 
     if (m_showMenuPanel)
     {
