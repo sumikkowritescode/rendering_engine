@@ -44,7 +44,7 @@ namespace Framework {
         }
         catch (const std::ios_base::failure &e)
         {
-            std::cerr << "Exception occured when reading a shader file\n"
+            std::cerr << "Exception occurred when reading a shader file\n"
                 << e.what() << "\n"
                 << "Please check that all of the shader files can be found."
                 << std::endl;

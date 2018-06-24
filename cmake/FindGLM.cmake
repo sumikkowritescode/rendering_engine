@@ -1,13 +1,7 @@
-IF(WIN32)
-    SET(GLM_HEADER_SEARCH_DIRS
-    "${CMAKE_SOURCE_DIR}/includes"
-    )
-ELSE(WIN32)
-    SET(GLM_HEADER_SEARCH_DIRS
-        "/usr/include"
-        "/usr/local/include"
-    )
-ENDIF(WIN32)
+# Use local GLM only
+SET(GLM_HEADER_SEARCH_DIRS
+"${CMAKE_SOURCE_DIR}/includes"
+)
 
 # check environment variable
 SET(GLM_ENV_ROOT_DIR "$ENV{GLM_ROOT_DIR}")

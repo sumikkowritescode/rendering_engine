@@ -9,7 +9,7 @@ namespace Framework {
     public:
         GBuffer();
         ~GBuffer();
-        void Init(Renderer &m_renderer);
+        void Init(Renderer& renderer);
 
         GLuint GetFBO();
         GLuint GetPosDepth() const;
