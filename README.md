@@ -2,7 +2,7 @@
 Currently using OpenGL only (more APIs under work).
 This project is under refactoring and updates will be introduced occasionally.
 
-The engine uses deferred shading, Screen Space Ambient Occlusion, HDR, Bloom and motion blur. The current scene renders the Crytek Sponza Atrium model from [McGuire, Computer Graphics Archive](http://graphics.cs.williams.edu/data/meshes.xml). The scene has 100 dynamic lights and light boxes, a directional sunlight and shadows.
+The engine uses deferred shading, Screen Space Ambient Occlusion, HDR, Bloom and motion blur. The current scene renders the Crytek Sponza Atrium model from [McGuire, Computer Graphics Archive](http://graphics.cs.williams.edu/data/meshes.xml). The scene has 100 lights with boxes, a directional sunlight and shadows.
 
 The scene's settings can be tweaked from a menu which is accessed by pressing the __ESC__. You can also change the between different debugging draw modes by pressing 1-6.
 

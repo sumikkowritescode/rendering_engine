@@ -123,7 +123,7 @@ int main(int, char**)
 
         GetKeyboard(time);
 
-        //UpdateObjects(renderObjects);
+        UpdateObjects(renderObjects);
 
         scene.GeometryPass(renderObjects, camera, g_renderer);
         scene.ShadowmapPass(renderObjects);
