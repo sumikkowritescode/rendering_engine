@@ -74,7 +74,7 @@ namespace Framework {
         glDeleteBuffers(1, &m_vbo);
     }
 
-    void Skybox::Render(const glm::mat4 &view, const glm::mat4 &projection)
+    void Skybox::Render(const glm::mat4& view, const glm::mat4& projection)
     {
         glDepthFunc(GL_LEQUAL);
         m_shaderSkybox.Use();

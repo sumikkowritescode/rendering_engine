@@ -2,7 +2,7 @@
 
 namespace Framework {
     RenderObject::RenderObject(const std::string &modelPath, const glm::vec3 position, const glm::vec3 scale, const glm::vec3 rotation, const float angle) :
-        m_model(modelPath), m_position(position), m_scale(scale), m_rotation(rotation), m_angle(angle)
+        m_model(modelPath), m_position(position), m_scale(scale), m_rotation(rotation), m_angle(angle), m_modelViewMatrix(1.0f), m_prevModelViewMatrix(1.0f)
     {
     }
 

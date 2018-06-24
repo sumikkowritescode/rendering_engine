@@ -7,7 +7,14 @@ namespace Framework {
         m_sunLightColor(glm::vec3(1.0f, 1.0f, 1.0f)),
         m_shadowNearPlane(10.0f),
         m_shadowFarPlane(2000.0f),
-        m_lightController(100)
+        m_lightController(100),
+        m_projectionMatrix(1.0f),
+        m_viewMatrix(1.0f),
+        m_modelMatrix(1.0f),
+        m_lightProjectionMatrix(1.0f),
+        m_lightViewMatrix(1.0f),
+        m_lightSpaceMatrix(1.0f),
+        m_modelViewMatrix(1.0f)
     {
         m_shaderLightingPass.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/deferred_lighting_pass.frag");
         m_shaderLightBox.Load("../resources/shaders/deferred_light_box.vert", "../resources/shaders/deferred_light_box.frag");
@@ -55,7 +62,7 @@ namespace Framework {
             // Render each object in the scene and pass their matrices to the GBuffer shader
             for (auto& object : renderObjects)
             {
-                m_modelMatrix = glm::mat4();
+                m_modelMatrix = glm::mat4(1.0f);
                 m_modelMatrix = glm::translate(m_modelMatrix, object.GetPosition());
                 m_modelMatrix = glm::scale(m_modelMatrix, object.GetScale());
                 m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(object.GetAngle()), object.GetRotation());
@@ -81,7 +88,7 @@ namespace Framework {
             m_shadowMap.GetShader().SetMatrix("lightSpaceMatrix", m_lightSpaceMatrix);
             for (const auto& object : renderObjects)
             {
-                m_modelMatrix = glm::mat4();
+                m_modelMatrix = glm::mat4(1.0f);
                 m_modelMatrix = glm::translate(m_modelMatrix, object.GetPosition());
                 m_modelMatrix = glm::scale(m_modelMatrix, object.GetScale());
                 m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(object.GetAngle()), object.GetRotation());
