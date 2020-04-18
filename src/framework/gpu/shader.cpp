@@ -169,6 +169,8 @@ namespace Framework {
         GLenum errorCode = glGetError();
 
         if (errorCode != GL_NO_ERROR)
-            std::cout << errorCode << std::endl;
+        {
+            std::cout << "GL Error Code: " << errorCode << std::endl;
+        }
     }
 }

@@ -10,9 +10,8 @@
 namespace Framework {
     class Texture {
     public:
-        GLuint Load(const char* path, const std::string &directory);
-        GLuint Load(std::vector<const GLchar*> &m_faces);
-
+        GLuint Load(const char* path);
+        GLuint LoadCubeMap(std::vector<const GLchar*> &m_faces);
     };
 }
 #endif

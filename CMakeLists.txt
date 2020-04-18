@@ -15,13 +15,11 @@ find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
-find_package(ASSIMP REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIR})
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${GLM_INCLUDE_DIR})
-include_directories(${ASSIMP_INCLUDE_DIR})
 
 file(GLOB SOURCE_FILES
     "src/main.cpp"
@@ -47,7 +45,7 @@ file(GLOB SOURCE_FILES
 )
 
 add_executable(${project_name} ${SOURCE_FILES})
-target_link_libraries(${project_name} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${GLEW_LIBRARY} ${ASSIMP_LIBRARIES})
+target_link_libraries(${project_name} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${GLEW_LIBRARY})
 set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/")
 
 if (MSVC)

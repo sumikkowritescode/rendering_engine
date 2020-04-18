@@ -1,6 +1,7 @@
 #include "mesh.h"
 
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 #define GLM_FORCE_RADIANS
@@ -23,24 +24,32 @@ namespace Framework {
         GLuint normalNr = 1;
         GLuint heightNr = 1;
 
-        for(GLuint i = 0; i < m_textures.size(); i++)
+        for (GLuint i = 0; i < m_textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
             std::stringstream ss;
             std::string number;
             std::string name = m_textures[i].type;
-            if(name == "texture_diffuse")
+
+            if (name == "texture_diffuse")
+            {
                 ss << diffuseNr++;
-            else if(name == "texture_specular")
+            }
+            else if (name == "texture_specular")
+            {
                 ss << specularNr++;
-            else if(name == "texture_normal")
+            }
+            else if (name == "texture_normal")
+            {
                 ss << normalNr++;
-            else if(name == "texture_height")
+            }
+            else if (name == "texture_height")
+            {
                 ss << heightNr++;
+            }
+
             number = ss.str();
-
             shader.SetInt( (name + number).c_str(), i);
-
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
         }
 
@@ -55,8 +64,7 @@ namespace Framework {
         }
     }
 
-    void Mesh::SetupMesh()
-    {
+    void Mesh::SetupMesh() {
         glGenVertexArrays(1, &m_vao);
         glGenBuffers(1, &m_vbo);
         glGenBuffers(1, &m_ebo);

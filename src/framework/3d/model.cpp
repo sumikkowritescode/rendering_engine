@@ -1,6 +1,6 @@
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "model.h"
-
-#include <assimp/postprocess.h>
+#include "../3rdparty/stb_image.h"
 
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
@@ -9,159 +9,238 @@
 #include <sstream>
 #include <iostream>
 
-namespace Framework {
-    Model::Model(const std::string& path, const bool gamma) :
-        m_gammaCorrection(gamma) {
-        LoadModel(path);
+namespace Framework
+{
+    Model::Model(const std::string &path, const bool gamma) :
+        m_gammaCorrection(gamma)
+    {
+        LoadOBJFromFile(path);
     }
 
-    void Model::Draw(Shader& shader) const {
-        for(const auto& mesh : m_meshes)
+    void Model::Draw(Shader &shader) const
+    {
+        for (const auto &mesh : m_meshes)
+        {
             mesh.Draw(shader);
+        }
     }
 
-    aiMesh *Model::GetMesh() const {
-        return m_mesh;
-    }
-
-    void Model::LoadModel(const std::string& path) {
-        const aiScene* scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-
-        if(!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    static std::string GetBaseDir(const std::string &filepath)
+    {
+        std::string result;
+        if (filepath.find_last_of("/\\") != std::string::npos)
         {
-            std::cout << "ERROR::ASSIMP:: " << m_importer.GetErrorString() << std::endl;
-            return;
+            result = filepath.substr(0, filepath.find_last_of("/\\"));
+        }
+        else
+        {
+            result = ".";
         }
 
-        m_directory = path.substr(0, path.find_last_of('/'));
+#ifdef _WIN32
+        result = "\\";
+#else
+        result += "/";
+#endif
 
-        ProcessNode(scene->mRootNode, scene);
+        return result;
     }
 
-    void Model::ProcessNode(const aiNode* node, const aiScene* scene) {
-        for(GLuint i = 0; i < node->mNumMeshes; i++)
+    static bool FileExists(const std::string &absFileName)
+    {
+        bool result;
+        FILE *filePtr = fopen(absFileName.c_str(), "rb");
+
+        if (filePtr)
         {
-            m_mesh = scene->mMeshes[node->mMeshes[i]];
-            m_meshes.push_back(ProcessMesh(m_mesh, scene));
+            result = true;
+            fclose(filePtr);
+        }
+        else
+        {
+            result = false;
         }
 
-        for(GLuint i = 0; i < node->mNumChildren; i++)
-        {
-            ProcessNode(node->mChildren[i], scene);
-        }
-
+        return result;
     }
 
-    Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene) {
-        std::vector<Mesh::Vertex> vertices;
-        std::vector<GLuint> indices;
-        std::vector<Mesh::Texture> textures;
+    bool Model::LoadOBJFromFile(const std::string &filename)
+    {
+        std::string err;
+        std::string warn;
+        std::vector<glm::vec3> vertices;
 
-        for(GLuint i = 0; i < mesh->mNumVertices; i++)
+        std::string baseDir = GetBaseDir(filename);
+        auto result = tinyobj::LoadObj(&m_vertexAttributes, &m_shapes, &m_materials, &warn, &err, filename.c_str(), baseDir.c_str());
+
+        if (!err.empty())
         {
-            Mesh::Vertex vertex;
-            glm::vec3 vector;
+            std::cerr << err << std::endl;
+        }
 
-            vector.x = mesh->mVertices[i].x;
-            vector.y = mesh->mVertices[i].y;
-            vector.z = mesh->mVertices[i].z;
-            vertex.Position = vector;
-
-            if (mesh->HasNormals())
+        if (result)
+        {
+            for (size_t i = 0; i < m_vertexAttributes.vertices.size(); i += 3)
             {
-                vector.x = mesh->mNormals[i].x;
-                vector.y = mesh->mNormals[i].y;
-                vector.z = mesh->mNormals[i].z;
-                vertex.Normal = vector;
+                vertices.push_back(glm::vec3(
+                        m_vertexAttributes.vertices[i],
+                        m_vertexAttributes.vertices[i + 1],
+                        m_vertexAttributes.vertices[i + 2]));
             }
 
-            if(mesh->HasTextureCoords(0))
+            for (size_t m = 0; m < m_materials.size(); m++)
             {
-                glm::vec2 vec;
-                vec.x = mesh->mTextureCoords[0][i].x;
-                vec.y = mesh->mTextureCoords[0][i].y;
-                vertex.TexCoords = vec;
-            }
-            else
-                vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+                tinyobj::material_t *materialPtr = &m_materials[m];
 
-            if (mesh->HasTangentsAndBitangents())
-            {
-                vector.x = mesh->mTangents[i].x;
-                vector.y = mesh->mTangents[i].y;
-                vector.z = mesh->mTangents[i].z;
-                vertex.Tangent = vector;
-
-                vector.x = mesh->mBitangents[i].x;
-                vector.y = mesh->mBitangents[i].y;
-                vector.z = mesh->mBitangents[i].z;
-                vertex.Bitangent = vector;
-            }
-
-            vertices.push_back(vertex);
-        }
-
-        if (mesh->HasFaces())
-        {
-            for(GLuint i = 0; i < mesh->mNumFaces; i++)
-            {
-                aiFace face = mesh->mFaces[i];
-
-                for(GLuint j = 0; j < face.mNumIndices; j++)
-                    indices.push_back(face.mIndices[j]);
-            }
-        }
-
-        if(mesh->mMaterialIndex)
-        {
-            aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-
-            std::vector<Mesh::Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-            textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-
-            std::vector<Mesh::Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-            textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-            std::vector<Mesh::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-            textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-
-            std::vector<Mesh::Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-            textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-        }
-
-        return Mesh(vertices, indices, textures);
-    }
-
-    std::vector<Mesh::Texture> Model::LoadMaterialTextures(const aiMaterial* material, const aiTextureType type, const std::string &typeName) {
-        std::vector<Mesh::Texture> textures;
-
-        for (GLuint i = 0; i < material->GetTextureCount(type); i++)
-        {
-            aiString texturePath;
-            material->GetTexture(type, i, &texturePath);
-
-            bool skipTexture = false;
-
-            for (const auto &texture : m_loadedTextures)
-            {
-                if (texture.path == texturePath)
+                if (materialPtr->diffuse_texname.length() > 0)
                 {
-                    textures.push_back(texture);
-                    skipTexture = true;
-                    break;
+                    LoadTexture(materialPtr->diffuse_texname, "texture_diffuse", baseDir);
+                }
+
+                if (materialPtr->specular_texname.length() > 0)
+                {
+                    LoadTexture(materialPtr->specular_texname, "texture_specular", baseDir);
+                }
+
+                if (materialPtr->normal_texname.length() > 0)
+                {
+                    LoadTexture(materialPtr->normal_texname, "texture_normal", baseDir);
                 }
             }
 
-            if (!skipTexture)
+            for (const auto &shape : m_shapes)
             {
-                Mesh::Texture texture;
-                texture.id = m_texture.Load(texturePath.C_Str(), m_directory);
-                texture.type = typeName;
-                texture.path = texturePath;
-                textures.push_back(texture);
-                m_loadedTextures.push_back(texture);
+                std::vector<Mesh::Vertex> vertices;
+                std::vector<GLuint> indices;
+                std::vector<int> materialIDs;
+
+                size_t indexOffset = 0;
+                for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++)
+                {
+                    const size_t faceVertices = shape.mesh.num_face_vertices[f];
+                    Mesh::Vertex meshVertex;
+
+                    for (size_t v = 0; v < faceVertices; v++)
+                    {
+                        const auto index = indexOffset + v;
+                        const tinyobj::index_t &tinyObjVertex = shape.mesh.indices[index];
+
+                        meshVertex.Position = glm::vec3(
+                                m_vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 0],
+                                m_vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 1],
+                                m_vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 2]);
+
+                        if (m_vertexAttributes.normals.size() > 0)
+                        {
+                            meshVertex.Normal = glm::vec3(
+                                    m_vertexAttributes.normals[3 * tinyObjVertex.normal_index + 0],
+                                    m_vertexAttributes.normals[3 * tinyObjVertex.normal_index + 1],
+                                    m_vertexAttributes.normals[3 * tinyObjVertex.normal_index + 2]);
+                        }
+
+                        if (m_vertexAttributes.texcoords.size() > 0)
+                        {
+                            meshVertex.TexCoords = glm::vec2(
+                                    m_vertexAttributes.texcoords[2 * tinyObjVertex.texcoord_index + 0],
+                                    m_vertexAttributes.texcoords[2 * tinyObjVertex.texcoord_index + 1]);
+                        }
+                        else
+                        {
+                            meshVertex.TexCoords = glm::vec2(0.0f, 0.0f);
+                        }
+
+                        auto materialID = shape.mesh.material_ids[f];
+                        if ((materialID < 0) ||
+                            (materialID >= static_cast<int>(m_materials.size())))
+                        {
+                            materialID = m_materials.size() - 1;
+                        }
+
+                        indices.emplace_back(index);
+                        vertices.emplace_back(meshVertex);
+                        materialIDs.emplace_back(materialID);
+                    }
+
+                    indexOffset += faceVertices;
+                }
+
+                std::unordered_map<std::string, Mesh::Texture> addedTextures;
+                for (const auto& materialID : materialIDs)
+                {
+                    auto textureName = m_materials[materialID].diffuse_texname;
+
+                    auto it = m_textures.find(textureName);
+                    if (it != m_textures.end())
+                    {
+                        auto texture = std::make_pair(it->first, it->second);
+                        addedTextures.insert(texture);
+                    }
+
+                    textureName = m_materials[materialID].normal_texname;
+                    it = m_textures.find(textureName);
+                    if (it != m_textures.end())
+                    {
+                        auto texture = std::make_pair(it->first, it->second);
+                        addedTextures.insert(texture);
+                    }
+
+                    textureName = m_materials[materialID].specular_texname;
+                    it = m_textures.find(textureName);
+                    if (it != m_textures.end())
+                    {
+                        auto texture = std::make_pair(it->first, it->second);
+                        addedTextures.insert(texture);
+                    }
+                }
+
+                std::vector<Mesh::Texture> textures;
+                for (const auto& texture : addedTextures)
+                {
+                    textures.emplace_back(texture.second);
+                }
+
+                m_meshes.emplace_back(Mesh(vertices, indices, textures));
             }
         }
-        return textures;
+        else
+        {
+            std::cerr << "Failed to load " << filename << std::endl;
+        }
+
+        return result;
+    }
+
+    void Model::LoadTexture(const std::string &textureName, const std::string &materialType, const std::string &baseDir)
+    {
+        if (m_textures.find(textureName) == m_textures.end())
+        {
+            auto textureFileName = textureName;
+            auto fileExists = FileExists(textureFileName);
+
+            if (!fileExists)
+            {
+                textureFileName = baseDir + textureName;
+                fileExists = FileExists(textureFileName);
+
+                if (!fileExists)
+                {
+                    std::cerr << "Unable to find file: " << textureName
+                              << std::endl;
+                }
+            }
+
+            if (fileExists)
+            {
+                auto texture = Texture();
+                auto textureID = texture.Load(textureFileName.c_str());
+                auto meshTexture = Mesh::Texture {
+                        textureID,
+                        materialType,
+                        textureFileName
+                };
+
+                m_textures.insert(std::make_pair(textureName, meshTexture));
+            }
+        }
     }
 }

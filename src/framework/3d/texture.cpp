@@ -3,9 +3,8 @@
 #include "../3rdparty/stb_image.h"
 
 namespace Framework {
-    GLuint Texture::Load(const char* path, const std::string &directory) {
+    GLuint Texture::Load(const char* path) {
         std::string filename = std::string(path);
-        filename = directory + '/' + filename;
         GLuint textureID;
         glGenTextures(1, &textureID);
 
@@ -22,11 +21,12 @@ namespace Framework {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
         stbi_image_free(image);
+
         return textureID;
     }
 
 
-    GLuint Texture::Load(std::vector<const GLchar*> &m_faces) { 
+    GLuint Texture::LoadCubeMap(std::vector<const GLchar*> &m_faces) {
         GLuint textureID;
         glGenTextures(1, &textureID);
 

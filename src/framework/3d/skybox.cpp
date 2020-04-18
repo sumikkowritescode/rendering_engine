@@ -7,7 +7,7 @@ namespace Framework {
     }
     void Skybox::Init(const GLchar* right, const GLchar* left, const GLchar* top, const GLchar* bottom, const GLchar* back, const GLchar* front) {
 
-        GLfloat m_vertices[] = { 
+        const GLfloat m_vertices[] = {
         -1.0f,  1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,
@@ -66,7 +66,7 @@ namespace Framework {
         m_faces.push_back(bottom);
         m_faces.push_back(back);
         m_faces.push_back(front);
-        m_cubemapTexture = m_texture.Load(m_faces);
+        m_cubemapTexture = m_texture.LoadCubeMap(m_faces);
     }
 
     Skybox::~Skybox() {

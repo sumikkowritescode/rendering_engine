@@ -20,7 +20,7 @@ namespace Framework {
         struct Texture {
             GLuint id;
             std::string type;
-            aiString path;
+            std::string path;
         };
 
         struct Vertex {
