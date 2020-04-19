@@ -82,7 +82,7 @@ namespace Framework
         {
             for (size_t i = 0; i < m_vertexAttributes.vertices.size(); i += 3)
             {
-                vertices.push_back(glm::vec3(
+                vertices.emplace_back(glm::vec3(
                         m_vertexAttributes.vertices[i],
                         m_vertexAttributes.vertices[i + 1],
                         m_vertexAttributes.vertices[i + 2]));
@@ -94,17 +94,17 @@ namespace Framework
 
                 if (materialPtr->diffuse_texname.length() > 0)
                 {
-                    LoadTexture(materialPtr->diffuse_texname, "texture_diffuse", baseDir);
+                    LoadTexture(materialPtr->diffuse_texname, DIFFUSE_TEXTURE_TYPE_NAME, baseDir);
                 }
 
                 if (materialPtr->specular_texname.length() > 0)
                 {
-                    LoadTexture(materialPtr->specular_texname, "texture_specular", baseDir);
+                    LoadTexture(materialPtr->specular_texname, SPECULAR_TEXTURE_TYPE_NAME, baseDir);
                 }
 
                 if (materialPtr->normal_texname.length() > 0)
                 {
-                    LoadTexture(materialPtr->normal_texname, "texture_normal", baseDir);
+                    LoadTexture(materialPtr->normal_texname, NORMAL_TEXTURE_TYPE_NAME, baseDir);
                 }
             }
 

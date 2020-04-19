@@ -1,14 +1,11 @@
 #include "mesh.h"
-
-#include <fstream>
-#include <iostream>
 #include <sstream>
 
-#define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 
 
-namespace Framework {
+namespace Framework
+{
     Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, const std::vector<Texture>& textures) :
     m_vertices(vertices),
     m_indices(indices),
@@ -31,19 +28,19 @@ namespace Framework {
             std::string number;
             std::string name = m_textures[i].type;
 
-            if (name == "texture_diffuse")
+            if (name == DIFFUSE_TEXTURE_TYPE_NAME)
             {
                 ss << diffuseNr++;
             }
-            else if (name == "texture_specular")
+            else if (name == SPECULAR_TEXTURE_TYPE_NAME)
             {
                 ss << specularNr++;
             }
-            else if (name == "texture_normal")
+            else if (name == NORMAL_TEXTURE_TYPE_NAME)
             {
                 ss << normalNr++;
             }
-            else if (name == "texture_height")
+            else if (name == HEIGHT_TEXTURE_TYPE_NAME)
             {
                 ss << heightNr++;
             }
@@ -64,7 +61,8 @@ namespace Framework {
         }
     }
 
-    void Mesh::SetupMesh() {
+    void Mesh::SetupMesh()
+    {
         glGenVertexArrays(1, &m_vao);
         glGenBuffers(1, &m_vbo);
         glGenBuffers(1, &m_ebo);

@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "../gpu/shader.h"
+#include "../../utils/global_constants.h"
 
 namespace Framework {
     class Mesh {
