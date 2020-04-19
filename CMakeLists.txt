@@ -59,11 +59,9 @@ else (MSVC)
 endif (MSVC)
 
 IF(WIN32)
-    add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x86/assimp.dll $<TARGET_FILE_DIR:${project_name}>)
     add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x86/SDL2.dll $<TARGET_FILE_DIR:${project_name}>)
 ENDIF(WIN32)
 
 IF(WIN64)
-    add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x64/assimp.dll $<TARGET_FILE_DIR:${project_name}>)
     add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x64/SDL2.dll $<TARGET_FILE_DIR:${project_name}>)
 ENDIF(WIN64)

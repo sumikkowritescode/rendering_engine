@@ -7,8 +7,6 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include <assimp/types.h>
-
 #include <string>
 #include <vector>
 

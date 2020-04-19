@@ -17,7 +17,7 @@ The project uses the following dependencies:
 - [SDL2](https://www.libsdl.org/download-2.0.php)
 - [GLEW](https://github.com/nigels-com/glew)
 - [GLM](http://glm.g-truc.net/0.9.8/index.html)
-- [ASSIMP](http://www.assimp.org/)
+- [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader)
 - [stb_image](https://github.com/nothings/stb)
 - [dear imgui,](https://github.com/ocornut/imgui)
 
@@ -62,7 +62,7 @@ The program follows a simple deferred shading pipeline:
 - The executable and DLLs will be under `./bin`
 
 ## Building on Linux
-- Install cmake, sdl2, glew, glm, assimp with your favourite package manager
+- Install cmake, sdl2, glew and glm with your favourite package manager
 - Generate Makefile with CMake, build the project and run it
 
 ## OSX
