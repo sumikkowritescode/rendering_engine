@@ -100,9 +100,11 @@ int main(int, char**)
         SDL_Event event;
 
         if (m_mouseLook)
+            SDL_SetRelativeMouseMode(SDL_TRUE);
             SDL_ShowCursor(0);
 
         if (!m_mouseLook)
+            SDL_SetRelativeMouseMode(SDL_FALSE);
             SDL_ShowCursor(1);
 
         while (SDL_PollEvent(&event))
