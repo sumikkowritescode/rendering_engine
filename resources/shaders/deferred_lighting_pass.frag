@@ -5,8 +5,8 @@ layout (location = 1) out vec4 BrightColor;
 in vec2 TexCoords;
 
 struct Light {
-    vec4 Position;
-    vec4 Color;
+    vec3 Position;
+    vec3 Color;
     float Linear;
     float Quadratic;
     float Radius;
@@ -117,8 +117,8 @@ vec3 calcSpotLights() {
     // This way the light keeps it's real color instead of being bright white.
     for (int i = 0; i < NR_LIGHTS; ++i)
     {
-        vec3 position = lights[i].Position.xyz;
-        vec3 color = lights[i].Color.xyz;
+        vec3 position = lights[i].Position;
+        vec3 color = lights[i].Color;
 
         // Distance between light source and current fragment
         float distance = length(position - FragPos);

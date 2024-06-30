@@ -16,13 +16,13 @@ namespace Framework {
         m_lightSpaceMatrix(1.0f),
         m_modelViewMatrix(1.0f)
     {
+        m_shaderLightingPass.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/deferred_lighting_pass.frag");
+        m_shaderLightBox.Load("../resources/shaders/deferred_light_box.vert", "../resources/shaders/deferred_light_box.frag");
         m_gbuffer.Init(renderer);
         m_ssao.Init(renderer);
         m_postProcess.Init(renderer);
         m_shadowMap.Init();
         m_skybox.Init("../resources/textures/right.jpg", "../resources/textures/left.jpg", "../resources/textures/top.jpg", "../resources/textures/bottom.jpg", "../resources/textures/back.jpg", "../resources/textures/front.jpg");
-        m_shaderLightingPass.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/deferred_lighting_pass.frag");
-        m_shaderLightBox.Load("../resources/shaders/deferred_light_box.vert", "../resources/shaders/deferred_light_box.frag");
     }
 
     void Scene::ReloadLightingPass() {
@@ -119,7 +119,7 @@ namespace Framework {
             m_shaderLightingPass.SetMatrix("lightSpaceMatrix", m_lightSpaceMatrix);
             m_shaderLightingPass.SetMatrix("inverseViewMatrix", glm::inverse(m_viewMatrix));
             m_shadowMap.SetTexture();
-            //m_lightController.SendBufferData(m_viewMatrix);
+            m_lightController.SendBufferData(m_viewMatrix);
             m_shaderLightingPass.SetInt("drawMode", drawMode);
             m_shaderLightingPass.SetFloat("ambience", ambience);
             m_fsQuad.Render();
@@ -132,9 +132,9 @@ namespace Framework {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gbuffer.GetFBO());
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_postProcess.GetFBO());
         glBlitFramebuffer(0, 0, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, 0, renderer.GetScreenWidth(), renderer.GetScreenHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-        //    renderer.SetViewport();
-        //    m_lightController.RenderLightBox(m_projectionMatrix, m_viewMatrix, m_modelMatrix);
-        //    m_fsQuad.Render();
+            renderer.SetViewport();
+            m_lightController.RenderLightBox(m_projectionMatrix, m_viewMatrix, m_modelMatrix);
+            m_fsQuad.Render();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         CheckForErrors();
