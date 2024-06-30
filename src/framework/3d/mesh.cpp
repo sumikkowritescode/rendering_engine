@@ -21,7 +21,7 @@ namespace Framework
         GLuint normalNr = 1;
         GLuint heightNr = 1;
 
-        for (GLuint i = 0; i < m_textures.size(); i++)
+        for (unsigned int i = 0; i < m_textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
             std::stringstream ss;
@@ -46,12 +46,13 @@ namespace Framework
             }
 
             number = ss.str();
-            shader.SetInt( (name + number).c_str(), i);
+            //shader.SetInt( (name + number).c_str(), i);
+            shader.SetInt(("material." + name + number).c_str(), i);
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
         }
 
         glBindVertexArray(m_vao);
-        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(m_indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         for (GLuint i = 0; i < m_textures.size(); i++)

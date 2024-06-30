@@ -16,14 +16,13 @@ namespace Framework {
         m_lightSpaceMatrix(1.0f),
         m_modelViewMatrix(1.0f)
     {
-        m_shaderLightingPass.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/deferred_lighting_pass.frag");
-        m_shaderLightBox.Load("../resources/shaders/deferred_light_box.vert", "../resources/shaders/deferred_light_box.frag");
-
         m_gbuffer.Init(renderer);
         m_ssao.Init(renderer);
         m_postProcess.Init(renderer);
         m_shadowMap.Init();
         m_skybox.Init("../resources/textures/right.jpg", "../resources/textures/left.jpg", "../resources/textures/top.jpg", "../resources/textures/bottom.jpg", "../resources/textures/back.jpg", "../resources/textures/front.jpg");
+        m_shaderLightingPass.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/deferred_lighting_pass.frag");
+        m_shaderLightBox.Load("../resources/shaders/deferred_light_box.vert", "../resources/shaders/deferred_light_box.frag");
     }
 
     void Scene::ReloadLightingPass() {
@@ -44,6 +43,7 @@ namespace Framework {
         m_postProcess.ReloadShaders();
         m_shadowMap.ReloadShaders();
         m_skybox.ReloadShader();
+        m_shaderLightBox.Reload();
     }
 
     void Scene::GeometryPass(std::vector<RenderObject>& renderObjects, Camera& camera, Renderer& renderer) {
@@ -75,6 +75,8 @@ namespace Framework {
                 object.SetPreviousModelViewMatrix(object.GetModelViewMatrix());
             }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        CheckForErrors();
     }
 
     void Scene::ShadowmapPass(std::vector<RenderObject>& renderObjects) {
@@ -96,6 +98,8 @@ namespace Framework {
                 object.Draw(m_shadowMap.GetShader());
             }
         m_shadowMap.Unbind();
+
+        CheckForErrors();
     }
 
     void Scene::LightingPass(int drawMode, GLfloat ambience, Camera& camera, Renderer& renderer, const Time& time) {
@@ -115,21 +119,25 @@ namespace Framework {
             m_shaderLightingPass.SetMatrix("lightSpaceMatrix", m_lightSpaceMatrix);
             m_shaderLightingPass.SetMatrix("inverseViewMatrix", glm::inverse(m_viewMatrix));
             m_shadowMap.SetTexture();
-            m_lightController.SendBufferData(m_viewMatrix);
+            //m_lightController.SendBufferData(m_viewMatrix);
             m_shaderLightingPass.SetInt("drawMode", drawMode);
             m_shaderLightingPass.SetFloat("ambience", ambience);
             m_fsQuad.Render();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        CheckForErrors();
     }
 
     void Scene::RenderLights(Renderer &renderer) {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gbuffer.GetFBO());
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_postProcess.GetFBO());
         glBlitFramebuffer(0, 0, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, 0, renderer.GetScreenWidth(), renderer.GetScreenHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-            renderer.SetViewport();
-            m_lightController.RenderLightBox(m_projectionMatrix, m_viewMatrix, m_modelMatrix);
-            m_fsQuad.Render();
+        //    renderer.SetViewport();
+        //    m_lightController.RenderLightBox(m_projectionMatrix, m_viewMatrix, m_modelMatrix);
+        //    m_fsQuad.Render();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        CheckForErrors();
     }
 
     void Scene::RenderSkybox(Camera &camera) {
@@ -137,6 +145,8 @@ namespace Framework {
             m_viewMatrix = glm::mat4(glm::mat3(camera.GetViewMatrix()));
             m_skybox.Render(m_viewMatrix, m_projectionMatrix);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        CheckForErrors();
     }
 
     void Scene::PostProcessPass(bool useBloom, bool useMotionBlur, GLfloat exposure, GLfloat motionScale, Camera& camera, Renderer& renderer) {
@@ -168,5 +178,14 @@ namespace Framework {
 
     void Scene::SetShadowNearPlane(GLfloat near) {
         m_shadowNearPlane = near;
+    }
+
+    void Scene::CheckForErrors() {
+        GLenum errorCode = glGetError();
+
+        if (errorCode != GL_NO_ERROR)
+        {
+            std::cout << "GL Error Code: " << errorCode << std::endl;
+        }
     }
 }

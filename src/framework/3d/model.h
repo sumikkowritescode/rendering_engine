@@ -25,9 +25,6 @@ namespace Framework {
 
         const bool m_gammaCorrection;
         std::vector<Mesh> m_meshes;
-        std::vector<tinyobj::shape_t> m_shapes;
-        std::vector<tinyobj::material_t> m_materials;
-        tinyobj::attrib_t m_vertexAttributes;
         std::unordered_map<std::string, Mesh::Texture> m_textures;
     };
 }

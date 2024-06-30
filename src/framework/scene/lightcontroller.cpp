@@ -19,10 +19,15 @@ namespace Framework {
         {
             light.Position = GetRandomPosition();
             light.Color = GetRandomColor();
+            light.Linear = 0.0f;
+            light.Quadratic = 0.0f;
+            light.Radius = 0.0f;
         }
 
         m_shaderLightingPass.Use();
-        m_ssbo.Create(PointLight(), m_lightCount, 0, m_lights);
+        m_ssbo.Create(PointLight(), 0, m_lights);
+
+        CheckForErrors();
     }
 
     void LightController::SendBufferData(const glm::mat4& view) {
@@ -38,24 +43,28 @@ namespace Framework {
             light.Radius = radius;
         }
 
-        m_ssbo.SendData(PointLight(), m_lightCount, m_lights);
+        m_ssbo.SendData(PointLight(), m_lights);
+
+        CheckForErrors();
     }
 
     void LightController::RenderLightBox(const glm::mat4& projection, const glm::mat4& view, glm::mat4& model) {
-        m_shaderLightBox.Use();
-        m_shaderLightBox.SetMatrix("projection", projection);
-        m_shaderLightBox.SetMatrix("view", view);
-        for (auto& light : m_lights)
-        {
-            light.Position = glm::vec4(glm::inverse(view) * light.Position);
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(light.Position.x, light.Position.y, light.Position.z));
-            model = glm::scale(model, glm::vec3(5.0f));
+       m_shaderLightBox.Use();
+       m_shaderLightBox.SetMatrix("projection", projection);
+       m_shaderLightBox.SetMatrix("view", view);
+       for (auto& light : m_lights)
+       {
+           light.Position = glm::vec4(glm::inverse(view) * light.Position);
+           model = glm::mat4(1.0f);
+           model = glm::translate(model, glm::vec3(light.Position.x, light.Position.y, light.Position.z));
+           model = glm::scale(model, glm::vec3(5.0f));
 
-            m_shaderLightBox.SetMatrix("model", model);
-            m_shaderLightBox.SetVector("lightColor", light.Color);
-            m_lightCube.Render();
-        }
+           m_shaderLightBox.SetMatrix("model", model);
+           m_shaderLightBox.SetVector("lightColor", light.Color);
+           m_lightCube.Render();
+       }
+
+        CheckForErrors();
     }
 
     glm::vec4 LightController::GetRandomPosition() {
@@ -74,5 +83,14 @@ namespace Framework {
                         (Utils::GetRandomFloat(0.0f, 100.0f) / 100.0f) + 1.0f,
                          1.0f
                         );
+    }
+
+    void LightController::CheckForErrors() {
+        GLenum errorCode = glGetError();
+
+        if (errorCode != GL_NO_ERROR)
+        {
+            std::cout << "GL Error Code: " << errorCode << std::endl;
+        }
     }
 }

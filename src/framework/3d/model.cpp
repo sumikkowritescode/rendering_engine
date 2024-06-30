@@ -68,10 +68,16 @@ namespace Framework
     {
         std::string err;
         std::string warn;
+
         std::vector<glm::vec3> vertices;
 
         std::string baseDir = GetBaseDir(filename);
-        auto result = tinyobj::LoadObj(&m_vertexAttributes, &m_shapes, &m_materials, &warn, &err, filename.c_str(), baseDir.c_str());
+        
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        tinyobj::attrib_t vertexAttributes;
+
+        auto result = tinyobj::LoadObj(&vertexAttributes, &shapes, &materials, &warn, &err, filename.c_str(), baseDir.c_str());
 
         if (!err.empty())
         {
@@ -80,17 +86,17 @@ namespace Framework
 
         if (result)
         {
-            for (size_t i = 0; i < m_vertexAttributes.vertices.size(); i += 3)
+            for (size_t i = 0; i < vertexAttributes.vertices.size(); i += 3)
             {
                 vertices.emplace_back(glm::vec3(
-                        m_vertexAttributes.vertices[i],
-                        m_vertexAttributes.vertices[i + 1],
-                        m_vertexAttributes.vertices[i + 2]));
+                        vertexAttributes.vertices[i],
+                        vertexAttributes.vertices[i + 1],
+                        vertexAttributes.vertices[i + 2]));
             }
 
-            for (size_t m = 0; m < m_materials.size(); m++)
+            for (size_t m = 0; m < materials.size(); m++)
             {
-                tinyobj::material_t *materialPtr = &m_materials[m];
+                tinyobj::material_t *materialPtr = &materials[m];
 
                 if (materialPtr->diffuse_texname.length() > 0)
                 {
@@ -108,7 +114,7 @@ namespace Framework
                 }
             }
 
-            for (const auto &shape : m_shapes)
+            for (const auto &shape : shapes)
             {
                 std::vector<Mesh::Vertex> vertices;
                 std::vector<GLuint> indices;
@@ -126,23 +132,23 @@ namespace Framework
                         const tinyobj::index_t &tinyObjVertex = shape.mesh.indices[index];
 
                         meshVertex.Position = glm::vec3(
-                                m_vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 0],
-                                m_vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 1],
-                                m_vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 2]);
+                                vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 0],
+                                vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 1],
+                                vertexAttributes.vertices[3 * tinyObjVertex.vertex_index + 2]);
 
-                        if (m_vertexAttributes.normals.size() > 0)
+                        if (vertexAttributes.normals.size() > 0)
                         {
                             meshVertex.Normal = glm::vec3(
-                                    m_vertexAttributes.normals[3 * tinyObjVertex.normal_index + 0],
-                                    m_vertexAttributes.normals[3 * tinyObjVertex.normal_index + 1],
-                                    m_vertexAttributes.normals[3 * tinyObjVertex.normal_index + 2]);
+                                    vertexAttributes.normals[3 * tinyObjVertex.normal_index + 0],
+                                    vertexAttributes.normals[3 * tinyObjVertex.normal_index + 1],
+                                    vertexAttributes.normals[3 * tinyObjVertex.normal_index + 2]);
                         }
 
-                        if (m_vertexAttributes.texcoords.size() > 0)
+                        if (vertexAttributes.texcoords.size() > 0)
                         {
                             meshVertex.TexCoords = glm::vec2(
-                                    m_vertexAttributes.texcoords[2 * tinyObjVertex.texcoord_index + 0],
-                                    m_vertexAttributes.texcoords[2 * tinyObjVertex.texcoord_index + 1]);
+                                    vertexAttributes.texcoords[2 * tinyObjVertex.texcoord_index + 0],
+                                    vertexAttributes.texcoords[2 * tinyObjVertex.texcoord_index + 1]);
                         }
                         else
                         {
@@ -151,9 +157,9 @@ namespace Framework
 
                         auto materialID = shape.mesh.material_ids[f];
                         if ((materialID < 0) ||
-                            (materialID >= static_cast<int>(m_materials.size())))
+                            (materialID >= static_cast<int>(materials.size())))
                         {
-                            materialID = m_materials.size() - 1;
+                            materialID = materials.size() - 1;
                         }
 
                         indices.emplace_back(index);
@@ -167,7 +173,7 @@ namespace Framework
                 std::unordered_map<std::string, Mesh::Texture> addedTextures;
                 for (const auto& materialID : materialIDs)
                 {
-                    auto textureName = m_materials[materialID].diffuse_texname;
+                    auto textureName = materials[materialID].diffuse_texname;
 
                     auto it = m_textures.find(textureName);
                     if (it != m_textures.end())
@@ -176,7 +182,7 @@ namespace Framework
                         addedTextures.insert(texture);
                     }
 
-                    textureName = m_materials[materialID].normal_texname;
+                    textureName = materials[materialID].normal_texname;
                     it = m_textures.find(textureName);
                     if (it != m_textures.end())
                     {
@@ -184,7 +190,7 @@ namespace Framework
                         addedTextures.insert(texture);
                     }
 
-                    textureName = m_materials[materialID].specular_texname;
+                    textureName = materials[materialID].specular_texname;
                     it = m_textures.find(textureName);
                     if (it != m_textures.end())
                     {

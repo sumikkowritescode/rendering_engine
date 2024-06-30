@@ -63,6 +63,8 @@ namespace Framework {
         LightController  m_lightController;
         GBuffer     m_gbuffer;
         Skybox      m_skybox;
+
+        void CheckForErrors();
     };
 }
 

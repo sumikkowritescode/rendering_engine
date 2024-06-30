@@ -1,4 +1,5 @@
 #include "cube.h"
+#include <iostream>
 
 namespace Framework {
     Cube::Cube() {
@@ -33,12 +34,16 @@ namespace Framework {
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glEnableVertexAttribArray(0);
+
+        CheckForErrors();
     }
 
     Cube::~Cube() {
         glDeleteVertexArrays(1, &m_vao);
         glDeleteBuffers(1, &m_vbo);
         glDeleteBuffers(1, &m_ebo);
+
+        CheckForErrors();
     }
 
     void Cube::Render() {
@@ -48,5 +53,16 @@ namespace Framework {
         glPrimitiveRestartIndex(0xFFFF);
         glDrawElements(GL_TRIANGLE_STRIP, 17, GL_UNSIGNED_SHORT, 0);
         glBindVertexArray(0);
+
+        CheckForErrors();
+    }
+
+    void Cube::CheckForErrors() {
+        GLenum errorCode = glGetError();
+
+        if (errorCode != GL_NO_ERROR)
+        {
+            std::cout << "GL Error Code: " << errorCode << std::endl;
+        }
     }
 }

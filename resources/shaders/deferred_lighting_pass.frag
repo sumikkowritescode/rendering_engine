@@ -5,8 +5,8 @@ layout (location = 1) out vec4 BrightColor;
 in vec2 TexCoords;
 
 struct Light {
-    vec3 Position;
-    vec3 Color;
+    vec4 Position;
+    vec4 Color;
     float Linear;
     float Quadratic;
     float Radius;
@@ -117,15 +117,18 @@ vec3 calcSpotLights() {
     // This way the light keeps it's real color instead of being bright white.
     for (int i = 0; i < NR_LIGHTS; ++i)
     {
-        // Distance between light source and current fragment
-        float distance = length(lights[i].Position - FragPos);
+        vec3 position = lights[i].Position.xyz;
+        vec3 color = lights[i].Color.xyz;
 
-        vec3 lightDir = normalize(lights[i].Position - FragPos);
-        vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * (lights[i].Color - vec3(1.5f));
+        // Distance between light source and current fragment
+        float distance = length(position - FragPos);
+
+        vec3 lightDir = normalize(position - FragPos);
+        vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * (color - vec3(1.5f));
 
         vec3 halfwayDir = normalize(lightDir + viewDir);
         float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
-        vec3 specular = (lights[i].Color - vec3(1.5f)) * spec * Specular;
+        vec3 specular = (color - vec3(1.5f)) * spec * Specular;
 
         float attenuation = constant / (constant + lights[i].Linear * distance + lights[i].Quadratic * (distance * distance));
         diffuse  *= attenuation;

@@ -11,6 +11,7 @@ namespace Framework {
         Cube();
         ~Cube();
         void Render();
+        void CheckForErrors();
 
     private:
         GLuint m_vao, m_vbo, m_ebo;

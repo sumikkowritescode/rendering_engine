@@ -16,6 +16,7 @@ namespace Framework {
         LightController(GLuint lightCount);
         void SendBufferData(const glm::mat4 &view);
         void RenderLightBox(const glm::mat4 &projection, const glm::mat4 &view, glm::mat4 &model);
+        void CheckForErrors();
 
     private:
         glm::vec4 GetRandomPosition();

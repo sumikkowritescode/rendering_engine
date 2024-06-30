@@ -13,7 +13,6 @@ namespace Framework {
         GLfloat Linear;
         GLfloat Quadratic;
         GLfloat Radius;
-        GLfloat padding;
     };
 
     struct DirectionalLight {
