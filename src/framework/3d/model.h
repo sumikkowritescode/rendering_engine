@@ -27,7 +27,6 @@ namespace Framework {
         Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene);
         std::vector<Mesh::Texture> LoadMaterialTextures(const aiMaterial* mat, const aiTextureType type, const std::string &typeName);
 
-        Assimp::Importer           m_importer;
         aiMesh*                    m_mesh;
         const bool                 m_gammaCorrection;
         Texture                    m_texture;

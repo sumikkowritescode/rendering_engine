@@ -100,9 +100,11 @@ int main(int, char**)
         SDL_Event event;
 
         if (m_mouseLook)
+            SDL_SetRelativeMouseMode(SDL_TRUE);
             SDL_ShowCursor(0);
 
         if (!m_mouseLook)
+            SDL_SetRelativeMouseMode(SDL_FALSE);
             SDL_ShowCursor(1);
 
         while (SDL_PollEvent(&event))
@@ -117,8 +119,8 @@ int main(int, char**)
                 {
                     m_mouseXPos = event.motion.x;
                     m_mouseYPos = event.motion.y;
-                    m_mouseXOffset = (GLfloat)m_mouseXPos - (GLfloat)(g_renderer.GetScreenWidth() / 2.0f);
-                    m_mouseYOffset = (GLfloat)(g_renderer.GetScreenHeight() / 2.0f) - (GLfloat)m_mouseYPos;
+                    m_mouseXOffset = static_cast<GLfloat>(m_mouseXPos) - static_cast<GLfloat>(g_renderer.GetScreenWidth() / 2.0f);
+                    m_mouseYOffset = static_cast<GLfloat>(g_renderer.GetScreenHeight() / 2.0f) - static_cast<GLfloat>(m_mouseYPos);
 
                     camera.ProcessMouseMovement(m_mouseXOffset, m_mouseYOffset, g_mouseSensitivity);
                     SDL_WarpMouseInWindow(window, (g_renderer.GetScreenWidth() / 2), (g_renderer.GetScreenHeight()/2)); // Lock cursor in the middle
