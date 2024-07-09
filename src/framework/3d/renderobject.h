@@ -21,7 +21,7 @@ namespace Framework {
         glm::vec3 GetScale() const;
 
         glm::mat4 GetModelViewMatrix() const;
-        glm::mat4 GetPreviousModelViewMatrix() const; // TODO: Make something else around this?
+        glm::mat4 GetPreviousModelViewMatrix() const;
 
         float GetAngle() const;
 

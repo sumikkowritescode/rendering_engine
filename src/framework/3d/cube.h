@@ -10,6 +10,7 @@ namespace Framework {
     public:
         Cube();
         ~Cube();
+        void Init();
         void Render();
         void CheckForErrors();
 

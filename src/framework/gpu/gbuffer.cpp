@@ -4,10 +4,11 @@
 namespace Framework {
     GBuffer::GBuffer()
     {
-       m_shader.Load("../resources/shaders/gbuffer.vert", "../resources/shaders/gbuffer.frag");
     }
 
-    void GBuffer::Init(Renderer& renderer) {
+    void GBuffer::Init(const GLuint &screenWidth, const GLuint &screenHeight) {
+        m_shader.Load("../resources/shaders/gbuffer.vert", "../resources/shaders/gbuffer.frag");
+
         glGenFramebuffers(1, &m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -17,22 +18,22 @@ namespace Framework {
         glGenTextures(1, &m_velocityTexture);
 
         glBindTexture(GL_TEXTURE_2D, m_positionDepthTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glBindTexture(GL_TEXTURE_2D, m_normalTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glBindTexture(GL_TEXTURE_2D, m_albedoSpecTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glBindTexture(GL_TEXTURE_2D, m_velocityTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, GL_RG, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, screenWidth, screenHeight, 0, GL_RG, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -46,7 +47,7 @@ namespace Framework {
 
         glGenRenderbuffers(1, &m_rbo);
         glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, renderer.GetScreenWidth(), renderer.GetScreenHeight());
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

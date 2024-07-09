@@ -5,12 +5,12 @@ namespace Framework {
     {
         m_width = width;
         m_height = height;
-
-        m_shader.Load("../resources/shaders/shadowmap.vert", "../resources/shaders/shadowmap.frag");
-        m_shaderDebug.Load("../resources/shaders/shadowmap_debug.vert", "../resources/shaders/shadowmap_debug.frag");
     }
 
     void ShadowMap::Init() {
+        m_shader.Load("../resources/shaders/shadowmap.vert", "../resources/shaders/shadowmap.frag");
+        m_shaderDebug.Load("../resources/shaders/shadowmap_debug.vert", "../resources/shaders/shadowmap_debug.frag");
+
         glGenFramebuffers(1, &m_fbo);
 
         glGenTextures(1, &m_texture);
@@ -52,8 +52,8 @@ namespace Framework {
             glBindTexture(GL_TEXTURE_2D, m_texture);
     }
 
-    void ShadowMap::RenderDebug(Quad &fsQuad, GLfloat zNear, GLfloat zFar, Renderer &renderer) {
-        renderer.SetViewport();
+    void ShadowMap::RenderDebug(Quad &fsQuad, GLfloat zNear, GLfloat zFar, const GLuint &screenWidth, const GLuint &screenHeight) {
+        glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_shaderDebug.Use();
         m_shaderDebug.SetInt("zNear", zNear);

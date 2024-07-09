@@ -3,7 +3,6 @@
 
 #include "../3d/quad.h"
 #include "../gpu/shader.h"
-#include "../renderer/renderer_gl.h"
 
 namespace Framework {
     class ShadowMap {
@@ -17,7 +16,7 @@ namespace Framework {
         void Unbind();
 
         void SetTexture();
-        void RenderDebug(Quad &fsQuad, GLfloat zNear, GLfloat zFar, Renderer &renderer);
+        void RenderDebug(Quad &fsQuad, GLfloat zNear, GLfloat zFar, const GLuint &screenWidth, const GLuint &screenHeight);
         void ReloadShaders();
 
         Shader &GetShader();

@@ -14,7 +14,7 @@ namespace Framework {
             m_ssbo = 0;
             glGenBuffers(1, &m_ssbo);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssbo);
-            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(S) * container.size(), container.data(), GL_DYNAMIC_COPY);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(container), container.data(), GL_STATIC_DRAW);
             glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding, m_ssbo);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
@@ -24,7 +24,8 @@ namespace Framework {
         template <typename S>
         void SendData(const S& s, const std::vector<S>& container) {
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssbo);
-            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(S) * container.size(), container.data(), GL_DYNAMIC_COPY);
+            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_ssbo);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(container), container.data(), GL_STATIC_DRAW);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
             CheckForErrors();

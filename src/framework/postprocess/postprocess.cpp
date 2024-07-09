@@ -4,11 +4,12 @@
 namespace Framework {
     PostProcess::PostProcess()
     {
-        m_shaderBlur.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/blur.frag");
-        m_shaderPostProcess.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/postprocess.frag");
     }
     
-    void PostProcess::Init(Renderer &m_renderer) {
+    void PostProcess::Init(const GLuint &screenWidth, const GLuint &screenHeight) {
+        m_shaderBlur.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/blur.frag");
+        m_shaderPostProcess.Load("../resources/shaders/deferred_lighting_pass.vert", "../resources/shaders/postprocess.frag");
+
         glGenFramebuffers(1, &m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -16,7 +17,7 @@ namespace Framework {
         for (GLuint i = 0; i < 2; i++)
         {
             glBindTexture(GL_TEXTURE_2D, m_colorBuffers[i]);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_renderer.GetScreenWidth(), m_renderer.GetScreenHeight(), 0, GL_RGB, GL_FLOAT, nullptr);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, nullptr);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -26,7 +27,7 @@ namespace Framework {
 
         glGenRenderbuffers(1, &m_rbo);
         glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_renderer.GetScreenWidth(), m_renderer.GetScreenHeight());
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
         GLuint hdrAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -42,7 +43,7 @@ namespace Framework {
         {
             glBindFramebuffer(GL_FRAMEBUFFER, m_pingpong_fbo[i]);
             glBindTexture(GL_TEXTURE_2D, m_pingpongColorbuffers[i]);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_renderer.GetScreenWidth(), m_renderer.GetScreenHeight(), 0, GL_RGB, GL_FLOAT, nullptr);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, nullptr);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -69,7 +70,7 @@ namespace Framework {
         return m_fbo;
     }
 
-    void PostProcess::Blur(Quad &fsQuad, Renderer &m_renderer) {
+    void PostProcess::Blur(Quad &fsQuad, const GLuint &screenWidth, const GLuint &screenHeight) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_horizontal = true;
         m_firstIteration = true;
@@ -78,7 +79,7 @@ namespace Framework {
         for (GLuint i = 0; i < amount; i++)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, m_pingpong_fbo[m_horizontal]);
-            m_renderer.SetViewport();
+            glViewport(0, 0, screenWidth, screenHeight);
             m_shaderBlur.SetInt("horizontal", m_horizontal);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, m_firstIteration ? m_colorBuffers[1] : m_pingpongColorbuffers[!m_horizontal]);

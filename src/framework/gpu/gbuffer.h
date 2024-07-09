@@ -1,7 +1,6 @@
 #ifndef GBUFFER_H
 #define GBUFFER_H
 
-#include "../renderer/renderer_gl.h"
 #include "shader.h"
 
 namespace Framework {
@@ -9,7 +8,7 @@ namespace Framework {
     public:
         GBuffer();
         ~GBuffer();
-        void Init(Renderer& renderer);
+        void Init(const GLuint &screenWidth, const GLuint &screenHeight);
 
         GLuint GetFBO();
         GLuint GetPosDepth() const;

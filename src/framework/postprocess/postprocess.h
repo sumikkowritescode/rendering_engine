@@ -11,8 +11,8 @@ namespace Framework {
         PostProcess();
         ~PostProcess();
 
-        void Init(Renderer &m_renderer);
-        void Blur(Quad &fsQuad, Renderer &m_renderer);
+        void Init(const GLuint &screenWidth, const GLuint &screenHeight);
+        void Blur(Quad &fsQuad, const GLuint &screenWidth, const GLuint &screenHeight);
         void Use(Quad &fsQuad, GBuffer &gbuffer, bool useBloom, bool useMotionBlur, GLfloat exposure, GLfloat motionScale);
         void ReloadShaders();
 

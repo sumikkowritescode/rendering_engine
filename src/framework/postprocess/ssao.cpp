@@ -9,11 +9,12 @@ namespace Framework {
     m_radius(5.0f),
     m_power(2.0f)
     {
-        m_shaderSSAO.Load("../resources/shaders/ssao.vert", "../resources/shaders/ssao.frag");
-        m_shaderBlur.Load("../resources/shaders/ssao.vert", "../resources/shaders/ssao_blur.frag");
     }
 
-    void SSAO::Init(Renderer &renderer) {
+    void SSAO::Init(const GLuint &screenWidth, const GLuint &screenHeight) {
+        m_shaderSSAO.Load("../resources/shaders/ssao.vert", "../resources/shaders/ssao.frag");
+        m_shaderBlur.Load("../resources/shaders/ssao.vert", "../resources/shaders/ssao_blur.frag");
+
         glGenFramebuffers(1, &m_fbo);
         glGenFramebuffers(1, &m_blur_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -22,7 +23,7 @@ namespace Framework {
         glGenTextures(1, &m_colorBufferBlur);
 
         glBindTexture(GL_TEXTURE_2D, m_colorBuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorBuffer, 0);
@@ -31,7 +32,7 @@ namespace Framework {
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_blur_fbo);
         glBindTexture(GL_TEXTURE_2D, m_colorBufferBlur);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, renderer.GetScreenWidth(), renderer.GetScreenHeight(), 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorBufferBlur, 0);
@@ -95,9 +96,9 @@ namespace Framework {
         glBindTexture(GL_TEXTURE_2D, m_colorBufferBlur);
     }
 
-    void SSAO::CreateTexture(GBuffer& gbuffer, Quad& fsQuad, const glm::mat4& projMatrix, Renderer& renderer) {
+    void SSAO::CreateTexture(GBuffer &gbuffer, Quad& fsQuad, const glm::mat4 &projMatrix, const GLuint &screenWidth, const GLuint &screenHeight) {
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-            renderer.SetViewport();
+            glViewport(0, 0, screenWidth, screenHeight);
             glClear(GL_COLOR_BUFFER_BIT);
             m_shaderSSAO.Use();
             glActiveTexture(GL_TEXTURE0);
@@ -118,9 +119,9 @@ namespace Framework {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void SSAO::BlurTexture(Quad &fsQuad, Renderer &renderer) {
+    void SSAO::BlurTexture(Quad &fsQuad, const GLuint &screenWidth, const GLuint &screenHeight) {
         glBindFramebuffer(GL_FRAMEBUFFER, m_blur_fbo);
-            renderer.SetViewport();
+            glViewport(0, 0, screenWidth, screenHeight);
             glClear(GL_COLOR_BUFFER_BIT);
             m_shaderBlur.Use();
             glActiveTexture(GL_TEXTURE0);

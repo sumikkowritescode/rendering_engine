@@ -26,7 +26,7 @@ namespace Framework {
         return m_modelViewMatrix;
     }
 
-    glm::mat4 RenderObject::GetPreviousModelViewMatrix() const // TODO: Make something else around this?
+    glm::mat4 RenderObject::GetPreviousModelViewMatrix() const
     {
         return m_prevModelViewMatrix;
     }

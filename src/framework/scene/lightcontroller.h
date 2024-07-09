@@ -14,6 +14,8 @@ namespace Framework {
     class LightController {
     public:
         LightController(GLuint lightCount);
+
+        void Init();
         void SendBufferData(const glm::mat4 &view);
         void RenderLightBox(const glm::mat4 &projection, const glm::mat4 &view, glm::mat4 &model);
         void CheckForErrors();

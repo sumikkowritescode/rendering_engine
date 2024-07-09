@@ -3,22 +3,33 @@
 
 namespace Framework {
     Cube::Cube() {
-        static const GLfloat m_vertices[] = { 
-            -1.0f, -1.0f, -1.0f, 1.0f,
-            -1.0f, -1.0f,  1.0f, 1.0f,
-            -1.0f,  1.0f, -1.0f, 1.0f,
-            -1.0f,  1.0f,  1.0f, 1.0f,
-             1.0f, -1.0f, -1.0f, 1.0f,
-             1.0f, -1.0f,  1.0f, 1.0f,
-             1.0f,  1.0f, -1.0f, 1.0f,
-             1.0f,  1.0f,  1.0f, 1.0f
+    }
+
+    Cube::~Cube() {
+        glDeleteVertexArrays(1, &m_vao);
+        glDeleteBuffers(1, &m_vbo);
+        glDeleteBuffers(1, &m_ebo);
+
+        CheckForErrors();
+    }
+
+    void Cube::Init() {
+        static const GLfloat m_vertices[] = {
+                -1.0f, -1.0f, -1.0f, 1.0f,
+                -1.0f, -1.0f,  1.0f, 1.0f,
+                -1.0f,  1.0f, -1.0f, 1.0f,
+                -1.0f,  1.0f,  1.0f, 1.0f,
+                1.0f, -1.0f, -1.0f, 1.0f,
+                1.0f, -1.0f,  1.0f, 1.0f,
+                1.0f,  1.0f, -1.0f, 1.0f,
+                1.0f,  1.0f,  1.0f, 1.0f
 
         };
 
         static const GLushort m_elements [] = {
-            0, 1, 2, 3, 6, 7, 4, 5,
-            0xFFFF, // Using a value that's not used in the code usually
-            2, 6, 0, 4, 1, 5, 3, 7
+                0, 1, 2, 3, 6, 7, 4, 5,
+                0xFFFF, // Using a value that's not used in the code usually
+                2, 6, 0, 4, 1, 5, 3, 7
         };
 
         glGenBuffers(1, &m_ebo);
@@ -34,14 +45,6 @@ namespace Framework {
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glEnableVertexAttribArray(0);
-
-        CheckForErrors();
-    }
-
-    Cube::~Cube() {
-        glDeleteVertexArrays(1, &m_vao);
-        glDeleteBuffers(1, &m_vbo);
-        glDeleteBuffers(1, &m_ebo);
 
         CheckForErrors();
     }

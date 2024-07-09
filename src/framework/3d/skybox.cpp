@@ -3,9 +3,10 @@
 namespace Framework {
     Skybox::Skybox()
     {
-        m_shaderSkybox.Load("../resources/shaders/skybox.vert", "../resources/shaders/skybox.frag");
     }
+
     void Skybox::Init(const GLchar* right, const GLchar* left, const GLchar* top, const GLchar* bottom, const GLchar* back, const GLchar* front) {
+        m_shaderSkybox.Load("../resources/shaders/skybox.vert", "../resources/shaders/skybox.frag");
 
         const GLfloat m_vertices[] = {
         -1.0f,  1.0f, -1.0f,

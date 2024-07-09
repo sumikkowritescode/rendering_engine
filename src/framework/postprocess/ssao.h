@@ -13,9 +13,9 @@ namespace Framework {
         SSAO();
         ~SSAO();
 
-        void Init(Renderer &renderer);
-        void CreateTexture(GBuffer &gbuffer, Quad &fsQuad, const glm::mat4 &u_projMat, Renderer &m_renderer);
-        void BlurTexture(Quad &fsQuad, Renderer &renderer);
+        void Init(const GLuint &screenWidth, const GLuint &screenHeight);
+        void CreateTexture(GBuffer &gbuffer, Quad &fsQuad, const glm::mat4 &u_projMat, const GLuint &screenWidth, const GLuint &screenHeight);
+        void BlurTexture(Quad &fsQuad, const GLuint &screenWidth, const GLuint &screenHeight);
         void SetTexture();
         void ReloadShaders();
 
@@ -32,8 +32,6 @@ namespace Framework {
         const void    SetPower(GLfloat power);
 
     private:
-        Renderer m_renderer;
-
         Shader  m_shaderSSAO;
         Shader  m_shaderBlur;
 

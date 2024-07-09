@@ -7,11 +7,9 @@
 #include "framework/base/time.h"
 
 #include "framework/renderer/renderer_gl.h"
-#include "framework/scene/scene.h"
 
 // Scene settings
 Framework::Camera camera(glm::vec3(100.0f, 100.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f);
-Framework::Renderer g_renderer;
 
 int u_drawMode = 1;
 bool u_useBloom = true;
@@ -36,15 +34,17 @@ float g_moveSpeed = 60.0f;
 const Uint8 *m_keyboardState = SDL_GetKeyboardState(nullptr);
 
 // Function prototypes
-void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& glcontext);
+void UpdateImgui(SDL_Window* &window, Framework::Renderer& renderer, SDL_GLContext& glcontext);
 void GetKeyboard(const Framework::Time& time);
-void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContext& glcontext);
+void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContext& glcontext, Framework::Renderer &renderer);
 void UpdateObjects(std::vector<Framework::RenderObject>& renderObjects);
 
 int main(int, char**)
 {
     SDL_Window* window;
     SDL_GLContext glcontext;
+
+    Framework::Renderer renderer;
 
     if (g_firstInit)
     {
@@ -59,7 +59,8 @@ int main(int, char**)
 
         camera.SetPlanes(1.0f, 750.0f);
 
-        ResizeWindow(1024, 768, window, glcontext);
+        ResizeWindow(1024, 768, window, glcontext, renderer);
+        renderer.SetResolution(1024, 768);
 
         g_firstInit = false;
     }
@@ -77,7 +78,9 @@ int main(int, char**)
     glEnable(GL_DEPTH_TEST);
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    // Create objects we want to render in the scene
+    renderer.Init();
+
+    // Create objects we want to render in a scene
     std::vector<Framework::RenderObject> renderObjects;
     Framework::RenderObject sponza("../resources/models/sponza/sponza.obj", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.25f), glm::vec3(1.0f), float(0.0f));
     Framework::RenderObject teapot1("../resources/models/teapot/teapot.obj", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f), glm::vec3(1.0f), float(-90.0f));
@@ -88,8 +91,8 @@ int main(int, char**)
 
     Framework::Time time;
 
-    Framework::Scene scene(g_renderer);
-    scene.Init();
+    //Framework::Renderer renderer();
+    //renderer.Init()
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -119,30 +122,30 @@ int main(int, char**)
                 {
                     m_mouseXPos = event.motion.x;
                     m_mouseYPos = event.motion.y;
-                    m_mouseXOffset = (GLfloat)m_mouseXPos - (GLfloat)(g_renderer.GetScreenWidth() / 2.0f);
-                    m_mouseYOffset = (GLfloat)(g_renderer.GetScreenHeight() / 2.0f) - (GLfloat)m_mouseYPos;
+                    m_mouseXOffset = (GLfloat)m_mouseXPos - (GLfloat)(renderer.GetScreenWidth() / 2.0f);
+                    m_mouseYOffset = (GLfloat)(renderer.GetScreenHeight() / 2.0f) - (GLfloat)m_mouseYPos;
 
                     camera.ProcessMouseMovement(m_mouseXOffset, m_mouseYOffset, g_mouseSensitivity);
-                    SDL_WarpMouseInWindow(window, (g_renderer.GetScreenWidth() / 2), (g_renderer.GetScreenHeight()/2)); // Lock cursor in the middle
+                    SDL_WarpMouseInWindow(window, (renderer.GetScreenWidth() / 2), (renderer.GetScreenHeight()/2)); // Lock cursor in the middle
                 }
             }
         }
 
-        UpdateImgui(window, scene, glcontext);
+        UpdateImgui(window, renderer, glcontext);
 
         GetKeyboard(time);
 
         UpdateObjects(renderObjects);
 
-        scene.GeometryPass(renderObjects, camera, g_renderer);
-        scene.ShadowmapPass(renderObjects);
-        scene.LightingPass(u_drawMode, u_ambience, camera, g_renderer, time);
-        scene.RenderLights(g_renderer);
-        scene.RenderSkybox(camera);
-        scene.PostProcessPass(u_useBloom, u_useMotionBlur, u_exposure, u_motionScale, camera, g_renderer);
+        renderer.GeometryPass(renderObjects, camera);
+        renderer.ShadowmapPass(renderObjects);
+        renderer.LightingPass(u_drawMode, u_ambience, camera);
+        renderer.RenderLights();
+        renderer.RenderSkybox(camera);
+        renderer.PostProcessPass(u_useBloom, u_useMotionBlur, u_exposure, u_motionScale, camera);
 
         if(m_shadowDebug)
-            scene.m_shadowMap.RenderDebug(scene.m_fsQuad, scene.GetShadowNearPlane(), scene.GetShadowFarPlane(), g_renderer);
+            renderer.m_shadowMap.RenderDebug(renderer.m_fsQuad, renderer.GetShadowNearPlane(), renderer.GetShadowFarPlane(), renderer.GetScreenWidth(), renderer.GetScreenHeight());
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -197,7 +200,7 @@ void GetKeyboard(const Framework::Time &time) {
         u_drawMode = 6;
 }
 
-void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& glcontext) {
+void UpdateImgui(SDL_Window* &window, Framework::Renderer& renderer, SDL_GLContext& glcontext) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
@@ -219,28 +222,28 @@ void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& gl
     
         if (ImGui::CollapsingHeader("Scene Settings"))
         {
-            glm::vec3 sunLightPos = scene.GetSunLightPos();
+            glm::vec3 sunLightPos = renderer.GetSunLightPos();
             ImGui::SliderFloat("Sunlight Pos X", &sunLightPos.x, -500.0f, 500.0f);
             ImGui::SliderFloat("Sunlight Pos Y", &sunLightPos.y, -500.0f, 500.0f);
             ImGui::SliderFloat("Sunlight Pos Z", &sunLightPos.z, -500.0f, 500.0f);
-            scene.SetSunLightPos(sunLightPos);
+            renderer.SetSunLightPos(sunLightPos);
         }
     
         if (ImGui::CollapsingHeader("SSAO Settings"))
         {
-            int   kernelSize = scene.m_ssao.GetKernelSize();
-            float radius = scene.m_ssao.GetRadius();
-            float power = scene.m_ssao.GetPower();
+            int   kernelSize = renderer.m_ssao.GetKernelSize();
+            float radius = renderer.m_ssao.GetRadius();
+            float power = renderer.m_ssao.GetPower();
 
             ImGui::SliderInt("SSAO kernel size", &kernelSize, 0, 256);
             ImGui::SliderFloat("SSAO kernel radius", &radius, 0.0f, 5.0f);
             ImGui::SliderFloat("SSAO occlusion power", &power, 0.0f, 5.0f);
 
-            scene.m_ssao.SetKernelSize(kernelSize);
-            scene.m_ssao.SetRadius(radius);
-            scene.m_ssao.SetPower(power);
+            renderer.m_ssao.SetKernelSize(kernelSize);
+            renderer.m_ssao.SetRadius(radius);
+            renderer.m_ssao.SetPower(power);
 
-            if (ImGui::Button("Reload Shaders")) scene.m_ssao.ReloadShaders();
+            if (ImGui::Button("Reload Shaders")) renderer.m_ssao.ReloadShaders();
         }
     
         if (ImGui::CollapsingHeader("PostProcess Settings"))
@@ -251,25 +254,25 @@ void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& gl
             if (ImGui::Button("Enable Bloom")) u_useBloom ^= 1;
             if (ImGui::Button("Enable Motion Blur")) u_useMotionBlur ^= 1;
             if (ImGui::Button("Reload Shaders")) {
-                scene.m_postProcess.ReloadShaders();
-                scene.ReloadLightingPass();
+                renderer.m_postProcess.ReloadShaders();
+                renderer.ReloadLightingPass();
             }
     
         }
     
         if (ImGui::CollapsingHeader("Shadowmap Settings"))
         {
-            float zNearShadow = scene.GetShadowNearPlane();
-            float zFarShadow = scene.GetShadowFarPlane();
+            float zNearShadow = renderer.GetShadowNearPlane();
+            float zFarShadow = renderer.GetShadowFarPlane();
 
             if (ImGui::Button("Shadowmap Debug")) m_shadowDebug ^= 1;
             ImGui::SliderFloat("Shadowmap zNear", &zNearShadow, -500.0f, 500.0f);
             ImGui::SliderFloat("Shadowmap zFar", &zFarShadow, 10.0f, 2000.0f);
 
-            scene.SetShadowNearPlane(zNearShadow);
-            scene.SetShadowFarPlane(zFarShadow);
+            renderer.SetShadowNearPlane(zNearShadow);
+            renderer.SetShadowFarPlane(zFarShadow);
 
-            if (ImGui::Button("Reload Shaders")) scene.m_shadowMap.ReloadShaders();
+            if (ImGui::Button("Reload Shaders")) renderer.m_shadowMap.ReloadShaders();
         }
 
         ImGui::NewLine();
@@ -284,22 +287,22 @@ void UpdateImgui(SDL_Window* &window, Framework::Scene& scene, SDL_GLContext& gl
         m_mouseLook = true;
 }
 
-void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContext &glcontext) {
-    g_renderer.SetResolution(width, height);
+void ResizeWindow(GLuint width, GLuint height, SDL_Window* &window, SDL_GLContext &glcontext, Framework::Renderer &renderer) {
+    renderer.SetResolution(width, height);
 
     if (!g_firstInit)
     {
         SDL_DestroyWindow(window);
     }
 
-    window = SDL_CreateWindow("Rendering Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, g_renderer.GetScreenWidth(), g_renderer.GetScreenHeight(), SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("Rendering Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, renderer.GetScreenWidth(), renderer.GetScreenHeight(), SDL_WINDOW_OPENGL);
 
     if (g_firstInit)
         glcontext = SDL_GL_CreateContext(window);
 
     SDL_GL_MakeCurrent(window, glcontext);
-    g_renderer.SetViewport();
-    g_renderer.SetProjectionMatrix(camera);
+    glViewport(0, 0, renderer.GetScreenWidth(), renderer.GetScreenHeight());
+    renderer.SetProjectionMatrix(camera);
 }
 
 void UpdateObjects(std::vector<Framework::RenderObject> &renderObjects) {

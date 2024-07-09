@@ -9,6 +9,7 @@ namespace Framework {
     public:
         Quad();
         ~Quad();
+        void Init();
         void Render();
 
     private:
