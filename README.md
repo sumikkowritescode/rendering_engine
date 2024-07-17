@@ -5,6 +5,8 @@ The engine uses deferred shading, Screen Space Ambient Occlusion, HDR, Bloom and
 
 The scene's settings can be tweaked from a menu which is accessed by pressing the __ESC__. You can also change the between different debugging draw modes by pressing 1-6.
 
+This project won't get any updates except for the very random merge commit to update CMake configs and other libraries to ensure that the project still compiles a binary.
+
 ![alt text](http://fatsopanda.com/images/demo_640.png "demo screenshot")
 
 ## Documentation
@@ -57,6 +59,7 @@ The program follows a simple deferred shading pipeline:
 - Build the project with cmake and build the VS project
 - All needed libraries and DLLs are included in the project
 - The executable and DLLs will be under `./bin`
+  - In case of debugging, attach your IDE directly to the running binary
 
 ## Building on Linux
 - Install cmake, sdl2, glew, glm, assimp with your favourite package manager
