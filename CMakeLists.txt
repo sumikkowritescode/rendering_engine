@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/includes)
+set(CMAKE_LIBRARY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/x64)
 set(project_name "rendering_engine")
 project(${project_name})
 
@@ -60,12 +62,5 @@ else (MSVC)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # For YouCompleteMe
 endif (MSVC)
 
-IF(WIN32)
-    add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x86/assimp.dll $<TARGET_FILE_DIR:${project_name}>)
-    add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x86/SDL2.dll $<TARGET_FILE_DIR:${project_name}>)
-ENDIF(WIN32)
-
-IF(WIN64)
-    add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x64/assimp.dll $<TARGET_FILE_DIR:${project_name}>)
+    add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x64/assimp-vc143-mt.dll $<TARGET_FILE_DIR:${project_name}>)
     add_custom_command(TARGET ${project_name} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/dlls/x64/SDL2.dll $<TARGET_FILE_DIR:${project_name}>)
-ENDIF(WIN64)
